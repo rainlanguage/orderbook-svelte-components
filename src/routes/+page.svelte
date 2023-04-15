@@ -1,3 +1,23 @@
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	import { queries } from '$lib';
+	import { Client, cacheExchange, fetchExchange } from '@urql/svelte';
+
+	const client = new Client({
+		url: 'https://api.thegraph.com/subgraphs/name/rainprotocol/orderbook-mumbai',
+		exchanges: [cacheExchange, fetchExchange]
+	});
+
+	const query = client.query(queries.takeOrderHistoryQuery, {}).toPromise();
+</script>
+
+{#await query}
+	<p>loading...</p>
+{:then { data }}
+	{#if data?.takeOrderEntities.length}
+		{#each data?.takeOrderEntities as order}
+			<div>
+				{order.inputToken.name}
+			</div>
+		{/each}
+	{/if}
+{/await}
