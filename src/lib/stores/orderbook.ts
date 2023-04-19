@@ -4,7 +4,13 @@ import type { OrderBook } from "$lib/types";
 import { ethers } from "ethers";
 import OrderBookArtifact from '$lib/abi/Orderbook.json'
 
-const orderbookAddress = writable<string | null>(null);
+export const orderbookAddress = writable<string | null>(null);
+
+/**
+ * Set the address of the orderbook contract.
+ * Once set it will be available in the $orderbook store.
+ * @param address - Address of the orderbook contract
+ */
 export const setOrderbookAddress = (address: string) => { orderbookAddress.set(address) }
 
 export const orderbook = derived([signer, orderbookAddress], ([$signer, $orderbookAddress]) => {
@@ -18,3 +24,4 @@ export const orderbook = derived([signer, orderbookAddress], ([$signer, $orderbo
         return null;
     }
 })
+

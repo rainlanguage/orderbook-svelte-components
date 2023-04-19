@@ -1,2 +1,2 @@
-export * from './OrderBookTypes'
-export * from './ReserveToken'
+export * from './typechain/OrderBookTypes'
+export * from './typechain/ReserveToken'
