@@ -13,7 +13,10 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "query takeOrderHistory {\n    takeOrderEntities {\n      id\n\t\tinput\n\t\tinputDisplay\n\t\toutput\n\t\toutputDisplay\n\t\ttimestamp\n\t\torder {\n\t\t\tid\n\t\t}\n\t\tinputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\toutputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\tsender {\n\t\t\tid\n\t\t}\n\t\ttransaction {\n\t\t\ttimestamp\n\t\t\tid\n\t\t}\n    }\n  }": types.TakeOrderHistoryDocument,
+    "fragment TakeOrderHistoryFragment on TakeOrderEntity {\n\tid\n\tinput\n\tinputDisplay\n\toutput\n\toutputDisplay\n\t\ttimestamp\n\t\torder {\n\t\t\tid\n\t\t}\n\t\tinputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\toutputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\tsender {\n\t\t\tid\n\t\t}\n\t\ttransaction {\n\t\t\ttimestamp\n\t\t\tid\n\t\t}\n    }": types.TakeOrderHistoryFragmentFragmentDoc,
+    "query takeOrderHistory {\n    takeOrderEntities {\n      ...TakeOrderHistoryFragment\n    }\n  }": types.TakeOrderHistoryDocument,
+    "query takeOrderHistoryForOwners ($owners: [String!]) {\n    takeOrderEntities (where: {sender_in: $owners}) {\n      ...TakeOrderHistoryFragment\n    }\n  }": types.TakeOrderHistoryForOwnersDocument,
+    "query takeOrderHistoryForOwnersOrders ($owners: [String!]) {\n    takeOrderEntities (where: {sender_in: $owners}) {\n      ...TakeOrderHistoryFragment\n    }\n  }": types.TakeOrderHistoryForOwnersOrdersDocument,
 };
 
 /**
@@ -33,7 +36,19 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query takeOrderHistory {\n    takeOrderEntities {\n      id\n\t\tinput\n\t\tinputDisplay\n\t\toutput\n\t\toutputDisplay\n\t\ttimestamp\n\t\torder {\n\t\t\tid\n\t\t}\n\t\tinputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\toutputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\tsender {\n\t\t\tid\n\t\t}\n\t\ttransaction {\n\t\t\ttimestamp\n\t\t\tid\n\t\t}\n    }\n  }"): (typeof documents)["query takeOrderHistory {\n    takeOrderEntities {\n      id\n\t\tinput\n\t\tinputDisplay\n\t\toutput\n\t\toutputDisplay\n\t\ttimestamp\n\t\torder {\n\t\t\tid\n\t\t}\n\t\tinputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\toutputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\tsender {\n\t\t\tid\n\t\t}\n\t\ttransaction {\n\t\t\ttimestamp\n\t\t\tid\n\t\t}\n    }\n  }"];
+export function graphql(source: "fragment TakeOrderHistoryFragment on TakeOrderEntity {\n\tid\n\tinput\n\tinputDisplay\n\toutput\n\toutputDisplay\n\t\ttimestamp\n\t\torder {\n\t\t\tid\n\t\t}\n\t\tinputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\toutputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\tsender {\n\t\t\tid\n\t\t}\n\t\ttransaction {\n\t\t\ttimestamp\n\t\t\tid\n\t\t}\n    }"): (typeof documents)["fragment TakeOrderHistoryFragment on TakeOrderEntity {\n\tid\n\tinput\n\tinputDisplay\n\toutput\n\toutputDisplay\n\t\ttimestamp\n\t\torder {\n\t\t\tid\n\t\t}\n\t\tinputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\toutputToken {\n\t\t\tname\n\t\t\tsymbol\n\t\t\tdecimals\n\t\t}\n\t\tsender {\n\t\t\tid\n\t\t}\n\t\ttransaction {\n\t\t\ttimestamp\n\t\t\tid\n\t\t}\n    }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query takeOrderHistory {\n    takeOrderEntities {\n      ...TakeOrderHistoryFragment\n    }\n  }"): (typeof documents)["query takeOrderHistory {\n    takeOrderEntities {\n      ...TakeOrderHistoryFragment\n    }\n  }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query takeOrderHistoryForOwners ($owners: [String!]) {\n    takeOrderEntities (where: {sender_in: $owners}) {\n      ...TakeOrderHistoryFragment\n    }\n  }"): (typeof documents)["query takeOrderHistoryForOwners ($owners: [String!]) {\n    takeOrderEntities (where: {sender_in: $owners}) {\n      ...TakeOrderHistoryFragment\n    }\n  }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query takeOrderHistoryForOwnersOrders ($owners: [String!]) {\n    takeOrderEntities (where: {sender_in: $owners}) {\n      ...TakeOrderHistoryFragment\n    }\n  }"): (typeof documents)["query takeOrderHistoryForOwnersOrders ($owners: [String!]) {\n    takeOrderEntities (where: {sender_in: $owners}) {\n      ...TakeOrderHistoryFragment\n    }\n  }"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
