@@ -1,23 +1,19 @@
-<script>
+<script lang="ts">
 	import { queries } from '$lib';
-	import { Client, cacheExchange, fetchExchange } from '@urql/svelte';
+	const { result, refresh, owners } = queries.queryTakeOrderHistory();
 
-	const client = new Client({
-		url: 'https://api.thegraph.com/subgraphs/name/rainprotocol/orderbook-mumbai',
-		exchanges: [cacheExchange, fetchExchange]
-	});
-
-	const query = client.query(queries.takeOrderHistoryQuery, {}).toPromise();
+	let owner: string;
+	$: $owners = owner !== '' ? [owner] : null;
 </script>
 
-{#await query}
-	<p>loading...</p>
-{:then { data }}
-	{#if data?.takeOrderEntities.length}
-		{#each data?.takeOrderEntities as order}
-			<div>
-				{order.inputToken.name}
-			</div>
-		{/each}
-	{/if}
-{/await}
+{#if $result?.data}
+	{#each $result.data as takeOrder}
+		{takeOrder.inputToken.symbol}
+		{takeOrder.inputDisplay}
+		{takeOrder.outputToken.symbol}
+		{takeOrder.outputToken.symbol}
+	{/each}
+{/if}
+
+<button on:click={refresh}>Refresh</button>
+<input type="text" bind:value={owner} />

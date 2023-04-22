@@ -1,6 +1,6 @@
 import { subgraphClient } from "$lib/stores";
 import { derived, writable, type Readable } from "svelte/store";
-import { graphql, useFragment, type FragmentType } from "./generated";
+import { graphql } from "./generated";
 import type { TakeOrderHistoryFragmentFragment } from "$lib/gql/generated/graphql";
 import type { CombinedError } from "@urql/svelte";
 
@@ -34,19 +34,19 @@ const takeOrderHistoryFragment = graphql(`fragment TakeOrderHistoryFragment on T
     }`
 )
 
-export const takeOrderHistory = graphql(`query takeOrderHistory {
+const takeOrderHistory = graphql(`query takeOrderHistory {
     takeOrderEntities {
       ...TakeOrderHistoryFragment
     }
   }`)
 
-export const takeOrderHistoryForOwners = graphql(`query takeOrderHistoryForOwners ($owners: [String!]) {
+const takeOrderHistoryForOwners = graphql(`query takeOrderHistoryForOwners ($owners: [String!]) {
     takeOrderEntities (where: {sender_in: $owners}) {
       ...TakeOrderHistoryFragment
     }
   }`)
 
-export const takeOrderHistoryForOwnersOrders = graphql(`query takeOrderHistoryForOwnersOrders ($owners: [String!]) {
+const takeOrderHistoryForOwnersOrders = graphql(`query takeOrderHistoryForOwnersOrders ($owners: [String!]) {
     takeOrderEntities (where: {sender_in: $owners}) {
       ...TakeOrderHistoryFragment
     }
@@ -60,9 +60,9 @@ export const takeOrderHistoryForOwnersOrders = graphql(`query takeOrderHistoryFo
  * Modifying the owners or orders stores, or calling the refresh function, will trigger a new query and update the result store.
  * @param options 
  */
-export const queryTakeOrderHistory = async (options: { owners: string[], orders: string[] }) => {
-	const owners = writable(options.owners)
-	const orders = writable(options.orders)
+export const queryTakeOrderHistory = (options?: { owners?: string[], orders?: string[] }) => {
+	const owners = writable(options?.owners || null)
+	const orders = writable(options?.orders || null)
 	const refreshStore = writable(1)
 
 	const result: Readable<{ data?: TakeOrderHistoryFragmentFragment[], error?: CombinedError }> = derived(
@@ -70,7 +70,8 @@ export const queryTakeOrderHistory = async (options: { owners: string[], orders:
 		([$subgraphClient, $owners, $orders, $refreshStore], set) => {
 			if ($subgraphClient) {
 				let queryPromise
-				if ($owners && $orders) {
+
+				if ($owners?.length && $orders?.length) {
 					queryPromise = $subgraphClient
 						.query(takeOrderHistoryForOwnersOrders, { owners: $owners, orders: $orders })
 						.toPromise();
@@ -103,5 +104,5 @@ export const queryTakeOrderHistory = async (options: { owners: string[], orders:
 		refreshStore.update(n => n + 1);
 	}
 
-	return { result, owners, orders };
+	return { result, owners, orders, refresh };
 }
