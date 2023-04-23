@@ -11,7 +11,7 @@ export const orderbookAddress = writable<string | null>(null);
  * Once set it will be available in the $orderbook store.
  * @param address - Address of the orderbook contract
  */
-export const setOrderbookAddress = (address: string) => { orderbookAddress.set(address) }
+export const setOrderbookAddress = (address: string) => orderbookAddress.set(address)
 
 export const orderbook = derived([signer, orderbookAddress], ([$signer, $orderbookAddress]) => {
     if ($signer && $orderbookAddress) {

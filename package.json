@@ -52,12 +52,10 @@
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.4",
 		"vite": "^4.2.0",
+		"svelte-ethers-store": "^2.6.1",
 		"vitest": "^0.25.3"
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"type": "module",
-	"dependencies": {
-		"svelte-ethers-store": "^2.6.1"
-	}
+	"type": "module"
 }
