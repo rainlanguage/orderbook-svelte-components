@@ -19,6 +19,7 @@
 			{#if order.validInputs}
 				{#each order.validInputs as input}
 					<p>
+						{input.vaultId}
 						{input.tokenVault.token.symbol}
 						{input.tokenVault.balanceDisplay}
 					</p>

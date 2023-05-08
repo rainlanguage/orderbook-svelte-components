@@ -11,6 +11,7 @@ const orderFragment = graphql(`
         orderJSONString
         orderActive
         validInputs {
+            vaultId
             tokenVault {
                 id
                 balance
@@ -23,6 +24,7 @@ const orderFragment = graphql(`
             }
         }
         validOutputs {
+            vaultId
             tokenVault {
                 id
                 balance
