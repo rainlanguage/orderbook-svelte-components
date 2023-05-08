@@ -831,6 +831,7 @@ export type Io = {
   id: Scalars['ID'];
   order: Order;
   token: Erc20;
+  tokenVault: TokenVault;
   vault: Vault;
 };
 
@@ -877,6 +878,27 @@ export type Io_Filter = {
   order_starts_with?: InputMaybe<Scalars['String']>;
   order_starts_with_nocase?: InputMaybe<Scalars['String']>;
   token?: InputMaybe<Scalars['String']>;
+  tokenVault?: InputMaybe<Scalars['String']>;
+  tokenVault_?: InputMaybe<TokenVault_Filter>;
+  tokenVault_contains?: InputMaybe<Scalars['String']>;
+  tokenVault_contains_nocase?: InputMaybe<Scalars['String']>;
+  tokenVault_ends_with?: InputMaybe<Scalars['String']>;
+  tokenVault_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenVault_gt?: InputMaybe<Scalars['String']>;
+  tokenVault_gte?: InputMaybe<Scalars['String']>;
+  tokenVault_in?: InputMaybe<Array<Scalars['String']>>;
+  tokenVault_lt?: InputMaybe<Scalars['String']>;
+  tokenVault_lte?: InputMaybe<Scalars['String']>;
+  tokenVault_not?: InputMaybe<Scalars['String']>;
+  tokenVault_not_contains?: InputMaybe<Scalars['String']>;
+  tokenVault_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  tokenVault_not_ends_with?: InputMaybe<Scalars['String']>;
+  tokenVault_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenVault_not_in?: InputMaybe<Array<Scalars['String']>>;
+  tokenVault_not_starts_with?: InputMaybe<Scalars['String']>;
+  tokenVault_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenVault_starts_with?: InputMaybe<Scalars['String']>;
+  tokenVault_starts_with_nocase?: InputMaybe<Scalars['String']>;
   token_?: InputMaybe<Erc20_Filter>;
   token_contains?: InputMaybe<Scalars['String']>;
   token_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -934,6 +956,10 @@ export type Io_OrderBy =
   | 'order__orderJSONString'
   | 'order__timestamp'
   | 'token'
+  | 'tokenVault'
+  | 'tokenVault__balance'
+  | 'tokenVault__balanceDisplay'
+  | 'tokenVault__id'
   | 'token__decimals'
   | 'token__id'
   | 'token__name'
@@ -2591,6 +2617,8 @@ export type SubscriptionVaultsArgs = {
 
 export type TakeOrderEntity = Event & {
   __typename?: 'TakeOrderEntity';
+  /** Input Ratio */
+  IORatio: Scalars['BigDecimal'];
   emitter: Account;
   id: Scalars['ID'];
   /** The input amount from the perspective of sender */
@@ -2598,8 +2626,6 @@ export type TakeOrderEntity = Event & {
   inputDisplay: Scalars['BigDecimal'];
   /** The index of the input token in order to match with the take order output. */
   inputIOIndex: Scalars['BigInt'];
-  /** Input Ratio */
-  inputRatio: Scalars['String'];
   inputToken: Erc20;
   order: Order;
   /** The output amount from the perspective of sender */
@@ -2607,8 +2633,6 @@ export type TakeOrderEntity = Event & {
   outputDisplay: Scalars['BigDecimal'];
   /** The index of the output token in `order` to match with the take order input. */
   outputIOIndex: Scalars['BigInt'];
-  /** Output Ratio */
-  outputRatio: Scalars['String'];
   outputToken: Erc20;
   sender: Account;
   timestamp: Scalars['BigInt'];
@@ -2616,6 +2640,14 @@ export type TakeOrderEntity = Event & {
 };
 
 export type TakeOrderEntity_Filter = {
+  IORatio?: InputMaybe<Scalars['BigDecimal']>;
+  IORatio_gt?: InputMaybe<Scalars['BigDecimal']>;
+  IORatio_gte?: InputMaybe<Scalars['BigDecimal']>;
+  IORatio_in?: InputMaybe<Array<Scalars['BigDecimal']>>;
+  IORatio_lt?: InputMaybe<Scalars['BigDecimal']>;
+  IORatio_lte?: InputMaybe<Scalars['BigDecimal']>;
+  IORatio_not?: InputMaybe<Scalars['BigDecimal']>;
+  IORatio_not_in?: InputMaybe<Array<Scalars['BigDecimal']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<TakeOrderEntity_Filter>>>;
@@ -2665,26 +2697,6 @@ export type TakeOrderEntity_Filter = {
   inputIOIndex_lte?: InputMaybe<Scalars['BigInt']>;
   inputIOIndex_not?: InputMaybe<Scalars['BigInt']>;
   inputIOIndex_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  inputRatio?: InputMaybe<Scalars['String']>;
-  inputRatio_contains?: InputMaybe<Scalars['String']>;
-  inputRatio_contains_nocase?: InputMaybe<Scalars['String']>;
-  inputRatio_ends_with?: InputMaybe<Scalars['String']>;
-  inputRatio_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  inputRatio_gt?: InputMaybe<Scalars['String']>;
-  inputRatio_gte?: InputMaybe<Scalars['String']>;
-  inputRatio_in?: InputMaybe<Array<Scalars['String']>>;
-  inputRatio_lt?: InputMaybe<Scalars['String']>;
-  inputRatio_lte?: InputMaybe<Scalars['String']>;
-  inputRatio_not?: InputMaybe<Scalars['String']>;
-  inputRatio_not_contains?: InputMaybe<Scalars['String']>;
-  inputRatio_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  inputRatio_not_ends_with?: InputMaybe<Scalars['String']>;
-  inputRatio_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  inputRatio_not_in?: InputMaybe<Array<Scalars['String']>>;
-  inputRatio_not_starts_with?: InputMaybe<Scalars['String']>;
-  inputRatio_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  inputRatio_starts_with?: InputMaybe<Scalars['String']>;
-  inputRatio_starts_with_nocase?: InputMaybe<Scalars['String']>;
   inputToken?: InputMaybe<Scalars['String']>;
   inputToken_?: InputMaybe<Erc20_Filter>;
   inputToken_contains?: InputMaybe<Scalars['String']>;
@@ -2752,26 +2764,6 @@ export type TakeOrderEntity_Filter = {
   outputIOIndex_lte?: InputMaybe<Scalars['BigInt']>;
   outputIOIndex_not?: InputMaybe<Scalars['BigInt']>;
   outputIOIndex_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  outputRatio?: InputMaybe<Scalars['String']>;
-  outputRatio_contains?: InputMaybe<Scalars['String']>;
-  outputRatio_contains_nocase?: InputMaybe<Scalars['String']>;
-  outputRatio_ends_with?: InputMaybe<Scalars['String']>;
-  outputRatio_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  outputRatio_gt?: InputMaybe<Scalars['String']>;
-  outputRatio_gte?: InputMaybe<Scalars['String']>;
-  outputRatio_in?: InputMaybe<Array<Scalars['String']>>;
-  outputRatio_lt?: InputMaybe<Scalars['String']>;
-  outputRatio_lte?: InputMaybe<Scalars['String']>;
-  outputRatio_not?: InputMaybe<Scalars['String']>;
-  outputRatio_not_contains?: InputMaybe<Scalars['String']>;
-  outputRatio_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  outputRatio_not_ends_with?: InputMaybe<Scalars['String']>;
-  outputRatio_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  outputRatio_not_in?: InputMaybe<Array<Scalars['String']>>;
-  outputRatio_not_starts_with?: InputMaybe<Scalars['String']>;
-  outputRatio_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  outputRatio_starts_with?: InputMaybe<Scalars['String']>;
-  outputRatio_starts_with_nocase?: InputMaybe<Scalars['String']>;
   outputToken?: InputMaybe<Scalars['String']>;
   outputToken_?: InputMaybe<Erc20_Filter>;
   outputToken_contains?: InputMaybe<Scalars['String']>;
@@ -2853,13 +2845,13 @@ export type TakeOrderEntity_Filter = {
 };
 
 export type TakeOrderEntity_OrderBy =
+  | 'IORatio'
   | 'emitter'
   | 'emitter__id'
   | 'id'
   | 'input'
   | 'inputDisplay'
   | 'inputIOIndex'
-  | 'inputRatio'
   | 'inputToken'
   | 'inputToken__decimals'
   | 'inputToken__id'
@@ -2880,7 +2872,6 @@ export type TakeOrderEntity_OrderBy =
   | 'output'
   | 'outputDisplay'
   | 'outputIOIndex'
-  | 'outputRatio'
   | 'outputToken'
   | 'outputToken__decimals'
   | 'outputToken__id'
@@ -3697,37 +3688,60 @@ export type _SubgraphErrorPolicy_ =
   /** If the subgraph has indexing errors, data will be omitted. The default. */
   | 'deny';
 
-export type TakeOrderHistoryFragmentFragment = { __typename?: 'TakeOrderEntity', id: string, input: any, inputDisplay: any, output: any, outputDisplay: any, timestamp: any, order: { __typename?: 'Order', id: string }, inputToken: { __typename?: 'ERC20', name: string, symbol: string, decimals: number }, outputToken: { __typename?: 'ERC20', name: string, symbol: string, decimals: number }, sender: { __typename?: 'Account', id: any }, transaction: { __typename?: 'Transaction', timestamp: any, id: string } } & { ' $fragmentName'?: 'TakeOrderHistoryFragmentFragment' };
+export type OrderFragmentFragment = { __typename?: 'Order', id: string, orderJSONString: string, orderActive: boolean, owner: { __typename?: 'Account', id: any }, validInputs?: Array<{ __typename?: 'IO', tokenVault: { __typename?: 'TokenVault', id: string, balance: any, balanceDisplay: any, token: { __typename?: 'ERC20', name: string, decimals: number, symbol: string } } }> | null, validOutputs?: Array<{ __typename?: 'IO', tokenVault: { __typename?: 'TokenVault', id: string, balance: any, balanceDisplay: any, token: { __typename?: 'ERC20', name: string, decimals: number, symbol: string } } }> | null } & { ' $fragmentName'?: 'OrderFragmentFragment' };
 
-export type TakeOrderHistoryQueryVariables = Exact<{ [key: string]: never; }>;
+export type OrderEntitiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TakeOrderHistoryQuery = { __typename?: 'Query', takeOrderEntities: Array<(
-    { __typename?: 'TakeOrderEntity' }
-    & { ' $fragmentRefs'?: { 'TakeOrderHistoryFragmentFragment': TakeOrderHistoryFragmentFragment } }
+export type OrderEntitiesQuery = { __typename?: 'Query', orders: Array<(
+    { __typename?: 'Order' }
+    & { ' $fragmentRefs'?: { 'OrderFragmentFragment': OrderFragmentFragment } }
   )> };
 
-export type TakeOrderHistoryForOwnersQueryVariables = Exact<{
+export type OrderEntitiesForOwnersQueryVariables = Exact<{
   owners?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
-export type TakeOrderHistoryForOwnersQuery = { __typename?: 'Query', takeOrderEntities: Array<(
-    { __typename?: 'TakeOrderEntity' }
-    & { ' $fragmentRefs'?: { 'TakeOrderHistoryFragmentFragment': TakeOrderHistoryFragmentFragment } }
+export type OrderEntitiesForOwnersQuery = { __typename?: 'Query', orders: Array<(
+    { __typename?: 'Order' }
+    & { ' $fragmentRefs'?: { 'OrderFragmentFragment': OrderFragmentFragment } }
   )> };
 
-export type TakeOrderHistoryForOwnersOrdersQueryVariables = Exact<{
+export type TakeOrderEntitiesFragmentFragment = { __typename?: 'TakeOrderEntity', id: string, input: any, inputDisplay: any, output: any, outputDisplay: any, timestamp: any, order: { __typename?: 'Order', id: string, owner: { __typename?: 'Account', id: any } }, inputToken: { __typename?: 'ERC20', name: string, symbol: string, decimals: number }, outputToken: { __typename?: 'ERC20', name: string, symbol: string, decimals: number }, sender: { __typename?: 'Account', id: any }, transaction: { __typename?: 'Transaction', timestamp: any, id: string } } & { ' $fragmentName'?: 'TakeOrderEntitiesFragmentFragment' };
+
+export type TakeOrderEntitiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TakeOrderEntitiesQuery = { __typename?: 'Query', takeOrderEntities: Array<(
+    { __typename?: 'TakeOrderEntity' }
+    & { ' $fragmentRefs'?: { 'TakeOrderEntitiesFragmentFragment': TakeOrderEntitiesFragmentFragment } }
+  )> };
+
+export type TakeOrderEntitiesForOwnersQueryVariables = Exact<{
   owners?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
-export type TakeOrderHistoryForOwnersOrdersQuery = { __typename?: 'Query', takeOrderEntities: Array<(
+export type TakeOrderEntitiesForOwnersQuery = { __typename?: 'Query', takeOrderEntities: Array<(
     { __typename?: 'TakeOrderEntity' }
-    & { ' $fragmentRefs'?: { 'TakeOrderHistoryFragmentFragment': TakeOrderHistoryFragmentFragment } }
+    & { ' $fragmentRefs'?: { 'TakeOrderEntitiesFragmentFragment': TakeOrderEntitiesFragmentFragment } }
   )> };
 
-export const TakeOrderHistoryFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TakeOrderHistoryFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TakeOrderEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"input"}},{"kind":"Field","name":{"kind":"Name","value":"inputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"output"}},{"kind":"Field","name":{"kind":"Name","value":"outputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"order"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"inputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"transaction"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<TakeOrderHistoryFragmentFragment, unknown>;
-export const TakeOrderHistoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"takeOrderHistory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"takeOrderEntities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TakeOrderHistoryFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TakeOrderHistoryFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TakeOrderEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"input"}},{"kind":"Field","name":{"kind":"Name","value":"inputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"output"}},{"kind":"Field","name":{"kind":"Name","value":"outputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"order"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"inputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"transaction"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<TakeOrderHistoryQuery, TakeOrderHistoryQueryVariables>;
-export const TakeOrderHistoryForOwnersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"takeOrderHistoryForOwners"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"owners"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"takeOrderEntities"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sender_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"owners"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TakeOrderHistoryFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TakeOrderHistoryFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TakeOrderEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"input"}},{"kind":"Field","name":{"kind":"Name","value":"inputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"output"}},{"kind":"Field","name":{"kind":"Name","value":"outputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"order"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"inputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"transaction"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<TakeOrderHistoryForOwnersQuery, TakeOrderHistoryForOwnersQueryVariables>;
-export const TakeOrderHistoryForOwnersOrdersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"takeOrderHistoryForOwnersOrders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"owners"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"takeOrderEntities"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sender_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"owners"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TakeOrderHistoryFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TakeOrderHistoryFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TakeOrderEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"input"}},{"kind":"Field","name":{"kind":"Name","value":"inputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"output"}},{"kind":"Field","name":{"kind":"Name","value":"outputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"order"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"inputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"transaction"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<TakeOrderHistoryForOwnersOrdersQuery, TakeOrderHistoryForOwnersOrdersQueryVariables>;
+export type TakeOrderEntitiesForOwnersOrdersQueryVariables = Exact<{
+  owners?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+}>;
+
+
+export type TakeOrderEntitiesForOwnersOrdersQuery = { __typename?: 'Query', takeOrderEntities: Array<(
+    { __typename?: 'TakeOrderEntity' }
+    & { ' $fragmentRefs'?: { 'TakeOrderEntitiesFragmentFragment': TakeOrderEntitiesFragmentFragment } }
+  )> };
+
+export const OrderFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrderFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Order"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"orderJSONString"}},{"kind":"Field","name":{"kind":"Name","value":"orderActive"}},{"kind":"Field","name":{"kind":"Name","value":"validInputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokenVault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"balanceDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"validOutputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokenVault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"balanceDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}}]}}]}}]}}]} as unknown as DocumentNode<OrderFragmentFragment, unknown>;
+export const TakeOrderEntitiesFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TakeOrderEntitiesFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TakeOrderEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"input"}},{"kind":"Field","name":{"kind":"Name","value":"inputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"output"}},{"kind":"Field","name":{"kind":"Name","value":"outputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"order"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"inputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"transaction"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<TakeOrderEntitiesFragmentFragment, unknown>;
+export const OrderEntitiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"orderEntities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"orders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrderFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrderFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Order"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"orderJSONString"}},{"kind":"Field","name":{"kind":"Name","value":"orderActive"}},{"kind":"Field","name":{"kind":"Name","value":"validInputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokenVault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"balanceDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"validOutputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokenVault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"balanceDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}}]}}]}}]}}]} as unknown as DocumentNode<OrderEntitiesQuery, OrderEntitiesQueryVariables>;
+export const OrderEntitiesForOwnersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"orderEntitiesForOwners"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"owners"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"orders"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"owner_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"owners"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrderFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrderFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Order"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"orderJSONString"}},{"kind":"Field","name":{"kind":"Name","value":"orderActive"}},{"kind":"Field","name":{"kind":"Name","value":"validInputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokenVault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"balanceDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"validOutputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokenVault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"balanceDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}}]}}]}}]}}]} as unknown as DocumentNode<OrderEntitiesForOwnersQuery, OrderEntitiesForOwnersQueryVariables>;
+export const TakeOrderEntitiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"takeOrderEntities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"takeOrderEntities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TakeOrderEntitiesFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TakeOrderEntitiesFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TakeOrderEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"input"}},{"kind":"Field","name":{"kind":"Name","value":"inputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"output"}},{"kind":"Field","name":{"kind":"Name","value":"outputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"order"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"inputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"transaction"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<TakeOrderEntitiesQuery, TakeOrderEntitiesQueryVariables>;
+export const TakeOrderEntitiesForOwnersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"takeOrderEntitiesForOwners"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"owners"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"takeOrderEntities"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"order_"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"owner_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"owners"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TakeOrderEntitiesFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TakeOrderEntitiesFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TakeOrderEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"input"}},{"kind":"Field","name":{"kind":"Name","value":"inputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"output"}},{"kind":"Field","name":{"kind":"Name","value":"outputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"order"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"inputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"transaction"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<TakeOrderEntitiesForOwnersQuery, TakeOrderEntitiesForOwnersQueryVariables>;
+export const TakeOrderEntitiesForOwnersOrdersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"takeOrderEntitiesForOwnersOrders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"owners"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"takeOrderEntities"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sender_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"owners"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TakeOrderEntitiesFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TakeOrderEntitiesFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TakeOrderEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"input"}},{"kind":"Field","name":{"kind":"Name","value":"inputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"output"}},{"kind":"Field","name":{"kind":"Name","value":"outputDisplay"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"order"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"inputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"transaction"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<TakeOrderEntitiesForOwnersOrdersQuery, TakeOrderEntitiesForOwnersOrdersQueryVariables>;

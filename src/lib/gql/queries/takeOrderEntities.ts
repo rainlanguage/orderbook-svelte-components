@@ -1,10 +1,10 @@
 import { subgraphClient } from "$lib/stores";
 import { derived, writable, type Readable } from "svelte/store";
-import { graphql } from "./generated";
-import type { TakeOrderHistoryFragmentFragment } from "$lib/gql/generated/graphql";
+import { graphql } from "../generated";
+import type { TakeOrderEntitiesFragmentFragment } from "$lib/gql/generated/graphql";
 import type { CombinedError } from "@urql/svelte";
 
-const takeOrderHistoryFragment = graphql(`fragment TakeOrderHistoryFragment on TakeOrderEntity {
+const takeOrderEntitiesFragment = graphql(`fragment TakeOrderEntitiesFragment on TakeOrderEntity {
 	id
 	input
 	inputDisplay
@@ -13,6 +13,9 @@ const takeOrderHistoryFragment = graphql(`fragment TakeOrderHistoryFragment on T
 		timestamp
 		order {
 			id
+			owner {
+				id
+			}
 		}
 		inputToken {
 			name
@@ -34,38 +37,38 @@ const takeOrderHistoryFragment = graphql(`fragment TakeOrderHistoryFragment on T
     }`
 )
 
-const takeOrderHistory = graphql(`query takeOrderHistory {
+const takeOrderEntities = graphql(`query takeOrderEntities {
     takeOrderEntities {
-      ...TakeOrderHistoryFragment
+      ...TakeOrderEntitiesFragment
     }
   }`)
 
-const takeOrderHistoryForOwners = graphql(`query takeOrderHistoryForOwners ($owners: [String!]) {
-    takeOrderEntities (where: {sender_in: $owners}) {
-      ...TakeOrderHistoryFragment
+const takeOrderEntitiesForOwners = graphql(`query takeOrderEntitiesForOwners ($owners: [String!]) {
+    takeOrderEntities (where: {order_: {owner_in: $owners}}) {
+      ...TakeOrderEntitiesFragment
     }
   }`)
 
-const takeOrderHistoryForOwnersOrders = graphql(`query takeOrderHistoryForOwnersOrders ($owners: [String!]) {
+const takeOrderEntitiesForOwnersOrders = graphql(`query takeOrderEntitiesForOwnersOrders ($owners: [String!]) {
     takeOrderEntities (where: {sender_in: $owners}) {
-      ...TakeOrderHistoryFragment
+      ...TakeOrderEntitiesFragment
     }
   }`)
 
 /**
- * General query for take order history.
+ * General query for take order entities.
  * Optionally filter by owners, orders.
  * 
  * Returns a stores with the result of the query, the owners and orders variables and a refresh function.
  * Modifying the owners or orders stores, or calling the refresh function, will trigger a new query and update the result store.
  * @param options 
  */
-export const queryTakeOrderHistory = (options?: { owners?: string[], orders?: string[] }) => {
+export const queryTakeOrderEntities = (options?: { owners?: string[], orders?: string[] }) => {
 	const owners = writable(options?.owners || null)
 	const orders = writable(options?.orders || null)
 	const refreshStore = writable(1)
 
-	const result: Readable<{ data?: TakeOrderHistoryFragmentFragment[], error?: CombinedError }> = derived(
+	const result: Readable<{ data?: TakeOrderEntitiesFragmentFragment[], error?: CombinedError }> = derived(
 		[subgraphClient, owners, orders, refreshStore],
 		([$subgraphClient, $owners, $orders, $refreshStore], set) => {
 			if ($subgraphClient) {
@@ -73,22 +76,23 @@ export const queryTakeOrderHistory = (options?: { owners?: string[], orders?: st
 
 				if ($owners?.length && $orders?.length) {
 					queryPromise = $subgraphClient
-						.query(takeOrderHistoryForOwnersOrders, { owners: $owners, orders: $orders })
+						.query(takeOrderEntitiesForOwnersOrders, { owners: $owners, orders: $orders })
 						.toPromise();
 				}
 				else if ($owners) {
+					console.log('querying for owners')
 					queryPromise = $subgraphClient
-						.query(takeOrderHistoryForOwners, { owners: $owners })
+						.query(takeOrderEntitiesForOwners, { owners: $owners })
 						.toPromise();
 				} else {
 					queryPromise = $subgraphClient
-						.query(takeOrderHistory, {})
+						.query(takeOrderEntities, {})
 						.toPromise();
 				}
 
 				queryPromise.then((result) => {
 					if (result.data?.takeOrderEntities) {
-						set({ data: result.data.takeOrderEntities as TakeOrderHistoryFragmentFragment[] });
+						set({ data: result.data.takeOrderEntities as TakeOrderEntitiesFragmentFragment[] });
 					} else if (result.error) {
 						set({ error: result.error });
 					}
