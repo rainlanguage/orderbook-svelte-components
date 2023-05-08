@@ -2,7 +2,7 @@ import { derived, writable } from "svelte/store";
 import { signer } from 'svelte-ethers-store'
 import type { OrderBook } from "$lib/types";
 import { ethers } from "ethers";
-import OrderBookArtifact from '$lib/abi/Orderbook.json'
+import OrderBookArtifact from '$lib/abi/OrderBook.json'
 
 export const orderbookAddress = writable<string | null>(null);
 
