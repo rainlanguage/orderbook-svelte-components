@@ -20,6 +20,9 @@ const documents = {
     "query takeOrderEntities {\n    takeOrderEntities {\n      ...TakeOrderEntitiesFragment\n    }\n  }": types.TakeOrderEntitiesDocument,
     "query takeOrderEntitiesForOwners ($owners: [String!]) {\n    takeOrderEntities (where: {order_: {owner_in: $owners}}) {\n      ...TakeOrderEntitiesFragment\n    }\n  }": types.TakeOrderEntitiesForOwnersDocument,
     "query takeOrderEntitiesForOwnersOrders ($owners: [String!]) {\n    takeOrderEntities (where: {sender_in: $owners}) {\n      ...TakeOrderEntitiesFragment\n    }\n  }": types.TakeOrderEntitiesForOwnersOrdersDocument,
+    "fragment TokenVaultFragment on TokenVault {\n        vaultId\n        orders {\n            id\n            orderActive\n            expression\n            expressionDeployer\n        }\n        owner {\n            id \n        }\n            balance\n            balanceDisplay\n            id\n        token {\n            symbol\n            name\n            decimals\n            id\n        }\n    }": types.TokenVaultFragmentFragmentDoc,
+    "query tokenVaults {\n    tokenVaults {\n      ...TokenVaultFragment\n    }\n  }": types.TokenVaultsDocument,
+    "query tokenVaultsForOwners ($owners: [String!]) {\n    tokenVaults (where: {owner_in: $owners}) {\n      ...TokenVaultFragment\n    }\n  }": types.TokenVaultsForOwnersDocument,
 };
 
 /**
@@ -64,6 +67,18 @@ export function graphql(source: "query takeOrderEntitiesForOwners ($owners: [Str
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "query takeOrderEntitiesForOwnersOrders ($owners: [String!]) {\n    takeOrderEntities (where: {sender_in: $owners}) {\n      ...TakeOrderEntitiesFragment\n    }\n  }"): (typeof documents)["query takeOrderEntitiesForOwnersOrders ($owners: [String!]) {\n    takeOrderEntities (where: {sender_in: $owners}) {\n      ...TakeOrderEntitiesFragment\n    }\n  }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "fragment TokenVaultFragment on TokenVault {\n        vaultId\n        orders {\n            id\n            orderActive\n            expression\n            expressionDeployer\n        }\n        owner {\n            id \n        }\n            balance\n            balanceDisplay\n            id\n        token {\n            symbol\n            name\n            decimals\n            id\n        }\n    }"): (typeof documents)["fragment TokenVaultFragment on TokenVault {\n        vaultId\n        orders {\n            id\n            orderActive\n            expression\n            expressionDeployer\n        }\n        owner {\n            id \n        }\n            balance\n            balanceDisplay\n            id\n        token {\n            symbol\n            name\n            decimals\n            id\n        }\n    }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query tokenVaults {\n    tokenVaults {\n      ...TokenVaultFragment\n    }\n  }"): (typeof documents)["query tokenVaults {\n    tokenVaults {\n      ...TokenVaultFragment\n    }\n  }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query tokenVaultsForOwners ($owners: [String!]) {\n    tokenVaults (where: {owner_in: $owners}) {\n      ...TokenVaultFragment\n    }\n  }"): (typeof documents)["query tokenVaultsForOwners ($owners: [String!]) {\n    tokenVaults (where: {owner_in: $owners}) {\n      ...TokenVaultFragment\n    }\n  }"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

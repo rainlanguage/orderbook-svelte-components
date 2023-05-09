@@ -4,7 +4,7 @@
 
 	initOrderbook({
 		address: '0xd14c2Ba8779C6c4Fba0D0606f4Ff65ecd4C5Bb38',
-		subgraphEndpoint: 'https://api.thegraph.com/subgraphs/name/siddharth2207/slsohysubgraph'
+		subgraphEndpoint: 'https://api.thegraph.com/subgraphs/name/hardyjosh/orderbook-polygon-nh'
 	});
 
 	const connectWallet = async () => {
