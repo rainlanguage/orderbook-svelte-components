@@ -37,10 +37,5 @@ export const tokens = [{
     "symbol": "TUSD",
     "address": "0x2e1ad108ff1d8c782fcbbb89aad783ac49586756",
     "decimals": 18
-},
-{
-    "symbol": "FRAX",
-    "address": "0x45c32fa6df82ead1e2ef74d17b76547eddfaff89",
-    "decimals": 18
 }
 ]
