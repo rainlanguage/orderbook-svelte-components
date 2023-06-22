@@ -139,35 +139,35 @@ export type DepositConfigStructOutput = [string, BigNumber, BigNumber] & {
   amount: BigNumber;
 };
 
-export type SignedContextStruct = {
+export type SignedContextV1Struct = {
   signer: PromiseOrValue<string>;
-  signature: PromiseOrValue<BytesLike>;
   context: PromiseOrValue<BigNumberish>[];
+  signature: PromiseOrValue<BytesLike>;
 };
 
-export type SignedContextStructOutput = [string, string, BigNumber[]] & {
+export type SignedContextV1StructOutput = [string, BigNumber[], string] & {
   signer: string;
-  signature: string;
   context: BigNumber[];
+  signature: string;
 };
 
 export type TakeOrderConfigStruct = {
   order: OrderStruct;
   inputIOIndex: PromiseOrValue<BigNumberish>;
   outputIOIndex: PromiseOrValue<BigNumberish>;
-  signedContext: SignedContextStruct[];
+  signedContext: SignedContextV1Struct[];
 };
 
 export type TakeOrderConfigStructOutput = [
   OrderStructOutput,
   BigNumber,
   BigNumber,
-  SignedContextStructOutput[]
+  SignedContextV1StructOutput[]
 ] & {
   order: OrderStructOutput;
   inputIOIndex: BigNumber;
   outputIOIndex: BigNumber;
-  signedContext: SignedContextStructOutput[];
+  signedContext: SignedContextV1StructOutput[];
 };
 
 export type WithdrawConfigStruct = {
@@ -241,14 +241,14 @@ export type TakeOrdersConfigStructOutput = [
 export interface OrderBookInterface extends utils.Interface {
   functions: {
     "addOrder(((address,uint8,uint256)[],(address,uint8,uint256)[],(address,bytes[],uint256[]),bytes))": FunctionFragment;
-    "clear((address,bool,(address,address,address),(address,uint8,uint256)[],(address,uint8,uint256)[]),(address,bool,(address,address,address),(address,uint8,uint256)[],(address,uint8,uint256)[]),(uint256,uint256,uint256,uint256,uint256,uint256),(address,bytes,uint256[])[],(address,bytes,uint256[])[])": FunctionFragment;
+    "clear((address,bool,(address,address,address),(address,uint8,uint256)[],(address,uint8,uint256)[]),(address,bool,(address,address,address),(address,uint8,uint256)[],(address,uint8,uint256)[]),(uint256,uint256,uint256,uint256,uint256,uint256),(address,uint256[],bytes)[],(address,uint256[],bytes)[])": FunctionFragment;
     "deposit((address,uint256,uint256))": FunctionFragment;
     "flashFee(address,uint256)": FunctionFragment;
     "flashLoan(address,address,uint256,bytes)": FunctionFragment;
     "maxFlashLoan(address)": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
     "removeOrder((address,bool,(address,address,address),(address,uint8,uint256)[],(address,uint8,uint256)[]))": FunctionFragment;
-    "takeOrders((address,address,uint256,uint256,uint256,((address,bool,(address,address,address),(address,uint8,uint256)[],(address,uint8,uint256)[]),uint256,uint256,(address,bytes,uint256[])[])[]))": FunctionFragment;
+    "takeOrders((address,address,uint256,uint256,uint256,((address,bool,(address,address,address),(address,uint8,uint256)[],(address,uint8,uint256)[]),uint256,uint256,(address,uint256[],bytes)[])[]))": FunctionFragment;
     "vaultBalance(address,address,uint256)": FunctionFragment;
     "withdraw((address,uint256,uint256))": FunctionFragment;
   };
@@ -278,8 +278,8 @@ export interface OrderBookInterface extends utils.Interface {
       OrderStruct,
       OrderStruct,
       ClearConfigStruct,
-      SignedContextStruct[],
-      SignedContextStruct[]
+      SignedContextV1Struct[],
+      SignedContextV1Struct[]
     ]
   ): string;
   encodeFunctionData(
@@ -568,8 +568,8 @@ export interface OrderBook extends BaseContract {
       alice_: OrderStruct,
       bob_: OrderStruct,
       clearConfig_: ClearConfigStruct,
-      aliceSignedContext_: SignedContextStruct[],
-      bobSignedContext_: SignedContextStruct[],
+      aliceSignedContext_: SignedContextV1Struct[],
+      bobSignedContext_: SignedContextV1Struct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -634,8 +634,8 @@ export interface OrderBook extends BaseContract {
     alice_: OrderStruct,
     bob_: OrderStruct,
     clearConfig_: ClearConfigStruct,
-    aliceSignedContext_: SignedContextStruct[],
-    bobSignedContext_: SignedContextStruct[],
+    aliceSignedContext_: SignedContextV1Struct[],
+    bobSignedContext_: SignedContextV1Struct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -700,8 +700,8 @@ export interface OrderBook extends BaseContract {
       alice_: OrderStruct,
       bob_: OrderStruct,
       clearConfig_: ClearConfigStruct,
-      aliceSignedContext_: SignedContextStruct[],
-      bobSignedContext_: SignedContextStruct[],
+      aliceSignedContext_: SignedContextV1Struct[],
+      bobSignedContext_: SignedContextV1Struct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -886,8 +886,8 @@ export interface OrderBook extends BaseContract {
       alice_: OrderStruct,
       bob_: OrderStruct,
       clearConfig_: ClearConfigStruct,
-      aliceSignedContext_: SignedContextStruct[],
-      bobSignedContext_: SignedContextStruct[],
+      aliceSignedContext_: SignedContextV1Struct[],
+      bobSignedContext_: SignedContextV1Struct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -953,8 +953,8 @@ export interface OrderBook extends BaseContract {
       alice_: OrderStruct,
       bob_: OrderStruct,
       clearConfig_: ClearConfigStruct,
-      aliceSignedContext_: SignedContextStruct[],
-      bobSignedContext_: SignedContextStruct[],
+      aliceSignedContext_: SignedContextV1Struct[],
+      bobSignedContext_: SignedContextV1Struct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

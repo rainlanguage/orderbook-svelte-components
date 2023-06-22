@@ -58,6 +58,7 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
-		"svelte-ethers-store": "^2.6.1"
+		"svelte-ethers-store": "^2.6.1",
+		"@urql/svelte": "^4.0.0"
 	}
 }
