@@ -1,5 +1,5 @@
 import { derived, writable } from "svelte/store";
-import { signer } from 'svelte-ethers-store'
+import { signer } from './wagmi-adapters';
 import type { OrderBook } from "$lib/types";
 import { ethers } from "ethers";
 import OrderBookArtifact from '$lib/abi/OrderBook.json'

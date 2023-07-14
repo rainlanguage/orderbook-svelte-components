@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { queries, orderbook, type OrderStruct } from '$lib';
-	import { signerAddress } from 'svelte-ethers-store';
 	const { result, refresh, owners } = queries.queryOrders();
+	import { account } from 'svelte-wagmi-stores';
 
 	let owner: string;
 	$: $owners = owner ? [owner] : null;
@@ -27,7 +27,7 @@
 			{/if}
 			{order.orderActive ? 'Order Active' : 'Order Inactive'}
 		</p>
-		{#if $orderbook && $signerAddress.toLowerCase() == order.owner.id.toLowerCase() && order.orderActive}
+		{#if $orderbook && $account?.address?.toLowerCase() == order.owner.id.toLowerCase() && order.orderActive}
 			<button
 				on:click={() => {
 					const orderstruct = JSON.parse(order.orderJSONString);
@@ -45,10 +45,10 @@
 <p>
 	<button on:click={refresh}>Refresh</button>
 	<input type="text" bind:value={owner} />
-	{#if $signerAddress}
+	{#if $account?.address}
 		<button
 			on:click={() => {
-				$owners = [$signerAddress.toLowerCase()];
+				$owners = [$account?.address?.toLowerCase() || ''];
 			}}>Only mine</button
 		>
 	{/if}

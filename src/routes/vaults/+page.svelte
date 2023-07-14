@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { BigNumber } from 'ethers';
 	import { queries, orderbook } from '$lib';
-	import { signerAddress } from 'svelte-ethers-store';
+	import { account } from 'svelte-wagmi-stores';
 	import type { TokenVaultFragmentFragment } from '$lib/gql/generated/graphql';
 	const { result, refresh, owners } = queries.queryTokenVaults();
 
-	$: $owners = $signerAddress ? [$signerAddress] : null;
+	$: $owners = $account?.address ? [$account.address] : null;
 
 	const removeFromVault = async (vault: TokenVaultFragmentFragment) => {
 		if (!$orderbook) return;
@@ -25,7 +25,7 @@
 			{vault.token.id}
 			{vault.balanceDisplay}
 			{vault.owner.id}
-			{#if $signerAddress}
+			{#if $account?.address}
 				<button
 					on:click={() => {
 						removeFromVault(vault);
