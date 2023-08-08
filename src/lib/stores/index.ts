@@ -1,6 +1,7 @@
 import { setOrderbookAddress } from '$lib/stores/orderbook'
 import { setSubgraphClient } from '$lib/stores/subgraph'
 import type { OrderbookComponentsConfig } from '$lib/types/config'
+import { getAddress, isAddress } from 'viem'
 
 export * from './orderbook'
 export * from './subgraph'
@@ -12,8 +13,13 @@ export * from './subgraph'
  * @param config - Configuration object
  */
 export const initOrderbook = async ({ address, subgraphEndpoint }: OrderbookComponentsConfig) => {
+    if (!isAddress(address)) {
+        console.warn(`Invalid address ${address}`)
+        return
+    }
+    const _address = getAddress(address)
     if (!await checkOrderbookAddress(address, subgraphEndpoint)) return
-    setOrderbookAddress(address)
+    setOrderbookAddress(_address)
     setSubgraphClient(subgraphEndpoint)
 }
 

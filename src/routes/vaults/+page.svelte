@@ -9,11 +9,13 @@
 
 	const removeFromVault = async (vault: TokenVaultFragmentFragment) => {
 		if (!$orderbook) return;
-		await $orderbook.withdraw({
-			vaultId: vault.vaultId,
-			token: vault.token.id,
-			amount: vault.balance
-		});
+		await $orderbook.write.withdraw([
+			{
+				vaultId: vault.vaultId,
+				token: vault.token.id as `0x${string}`,
+				amount: vault.balance
+			}
+		]);
 	};
 </script>
 
