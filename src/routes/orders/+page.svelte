@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { queries, orderbook, type OrderStruct } from '$lib';
-	const { result, refresh, owners } = queries.queryOrders();
+	import { queries, orderbook } from '$lib';
 	import { account } from 'svelte-wagmi-stores';
 
+	const { result, refresh, owners } = queries.queryOrders();
 	let owner: string;
 	$: $owners = owner ? [owner] : null;
 
-	const removeOrder = async (order: OrderStruct) => {
+	const removeOrder = async (order: any) => {
 		if (!$orderbook) return;
-		await $orderbook.removeOrder(order);
+		await $orderbook.write.removeOrder(order);
 	};
 </script>
 

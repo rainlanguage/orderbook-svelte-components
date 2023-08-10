@@ -1,23 +1,22 @@
 <script lang="ts">
 	import { queries, orderbook } from '$lib';
-	import { signerAddress } from 'svelte-ethers-store';
-	const { result, refresh, owners } = queries.queryTakeOrderEntities();
+	import { account } from 'svelte-wagmi-stores';
+	const { result, refresh, owners, orders } = queries.queryTakeOrderEntities();
 
-	let owner: string;
+	let owner: string, order: string;
 	$: $owners = owner ? [owner] : null;
-	$: console.log($owners);
-	$: console.log($orderbook);
-	$: console.log($result);
+	$: $orders = order ? [order] : null;
 </script>
 
 {#if $result?.data}
 	{#each $result.data as takeOrder}
 		<p>
+			{takeOrder.order.id}
 			{takeOrder.order.owner.id}
-			{takeOrder.outputToken.symbol}
 			{takeOrder.inputDisplay}
-			{takeOrder.inputToken.symbol}
+			{takeOrder.outputToken.symbol}
 			{takeOrder.outputDisplay}
+			{takeOrder.inputToken.symbol}
 		</p>
 	{/each}
 {:else if $result?.error}
@@ -27,11 +26,14 @@
 {/if}
 
 <button on:click={refresh}>Refresh</button>
+<label>owner</label>
 <input type="text" bind:value={owner} />
-{#if $signerAddress}
+{#if $account && $account.address}
 	<button
 		on:click={() => {
-			$owners = [$signerAddress.toLowerCase()];
+			$account && $account.address ? (owner = $account.address.toLowerCase()) : null;
 		}}>Only mine</button
 	>
 {/if}
+<label>order</label>
+<input type="text" bind:value={order} />

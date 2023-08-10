@@ -25,6 +25,9 @@ export const initOrderbook = async ({ address, subgraphEndpoint }: OrderbookComp
 
 /**
  * Check that the Orderbook address being used is actually being indexed by the subgraph endpoint.
+ * @param orderbookAddress - Address of the Orderbook contract
+ * @param subgraphEndpoint - Endpoint of the subgraph
+ * @returns True if the Orderbook address is being indexed by the subgraph endpoint
  */
 export const checkOrderbookAddress = async (orderbookAddress: string, subgraphEndpoint: string) => {
     const query = `
@@ -46,4 +49,34 @@ export const checkOrderbookAddress = async (orderbookAddress: string, subgraphEn
         return false
     }
     return true
+}
+
+/**
+ * Get the address of the first orderbook found on the subgraph endpoint.
+ * @param subgraphEndpoint - Endpoint of the subgraph
+ * @returns Address of the orderbook contract
+ */
+export const getOrderbookAddress = async (subgraphEndpoint: string): Promise<{ orderbookAddress?: string, error?: string }> => {
+    const query = `
+        query {
+            orderBooks(first: 1) {
+                address
+            }
+        }
+    `
+    try {
+        const response = await fetch(subgraphEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+        })
+        const json = await response.json()
+
+        if (!json.data?.orderBooks?.length) {
+            return { error: `No orderbook found on subgraph ${subgraphEndpoint}` }
+        }
+        return { orderbookAddress: json.data.orderBooks[0].address }
+    } catch (error: any) {
+        return { error: error?.message || 'Something went wrong with querying the endpoint' }
+    }
 }

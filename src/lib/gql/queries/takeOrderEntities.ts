@@ -1,17 +1,19 @@
 import { subgraphClient } from "$lib/stores";
 import { derived, writable, type Readable } from "svelte/store";
 import { graphql } from "../generated";
-import type { TakeOrderEntitiesFragmentFragment } from "$lib/gql/generated/graphql";
+import type { TakeOrderEntitiesDynamicFilterQuery, TakeOrderEntity_Filter } from "$lib/gql/generated/graphql";
 import type { CombinedError } from "@urql/svelte";
 
-const takeOrderEntitiesFragment = graphql(`fragment TakeOrderEntitiesFragment on TakeOrderEntity {
-	id
+const takeOrderEntitiesQuery = graphql(`query takeOrderEntitiesDynamicFilter ($filters: TakeOrderEntity_filter) {
+    takeOrderEntities (where: $filters) {
+		id
 	input
 	inputDisplay
 	output
 	outputDisplay
 		timestamp
 		order {
+			orderHash
 			id
 			owner {
 				id
@@ -34,24 +36,6 @@ const takeOrderEntitiesFragment = graphql(`fragment TakeOrderEntitiesFragment on
 			timestamp
 			id
 		}
-    }`
-)
-
-const takeOrderEntities = graphql(`query takeOrderEntities {
-    takeOrderEntities {
-      ...TakeOrderEntitiesFragment
-    }
-  }`)
-
-const takeOrderEntitiesForOwners = graphql(`query takeOrderEntitiesForOwners ($owners: [String!]) {
-    takeOrderEntities (where: {order_: {owner_in: $owners}}) {
-      ...TakeOrderEntitiesFragment
-    }
-  }`)
-
-const takeOrderEntitiesForOwnersOrders = graphql(`query takeOrderEntitiesForOwnersOrders ($owners: [String!]) {
-    takeOrderEntities (where: {sender_in: $owners}) {
-      ...TakeOrderEntitiesFragment
     }
   }`)
 
@@ -68,31 +52,17 @@ export const queryTakeOrderEntities = (options?: { owners?: string[], orders?: s
 	const orders = writable(options?.orders || null)
 	const refreshStore = writable(1)
 
-	const result: Readable<{ data?: TakeOrderEntitiesFragmentFragment[], error?: CombinedError }> = derived(
+	const result: Readable<{ data?: TakeOrderEntitiesDynamicFilterQuery['takeOrderEntities'], error?: CombinedError }> = derived(
 		[subgraphClient, owners, orders, refreshStore],
 		([$subgraphClient, $owners, $orders, $refreshStore], set) => {
 			if ($subgraphClient) {
-				let queryPromise
+				let filters: TakeOrderEntity_Filter = {}
+				if ($owners?.length) filters.order_ = { owner_in: $owners }
+				if ($orders?.length) filters.order_ = { ...filters.order_, orderHash_in: $orders }
 
-				if ($owners?.length && $orders?.length) {
-					queryPromise = $subgraphClient
-						.query(takeOrderEntitiesForOwnersOrders, { owners: $owners, orders: $orders })
-						.toPromise();
-				}
-				else if ($owners) {
-					console.log('querying for owners')
-					queryPromise = $subgraphClient
-						.query(takeOrderEntitiesForOwners, { owners: $owners })
-						.toPromise();
-				} else {
-					queryPromise = $subgraphClient
-						.query(takeOrderEntities, {})
-						.toPromise();
-				}
-
-				queryPromise.then((result) => {
+				$subgraphClient.query(takeOrderEntitiesQuery, { filters }).toPromise().then((result) => {
 					if (result.data?.takeOrderEntities) {
-						set({ data: result.data.takeOrderEntities as TakeOrderEntitiesFragmentFragment[] });
+						set({ data: result.data.takeOrderEntities });
 					} else if (result.error) {
 						set({ error: result.error });
 					}

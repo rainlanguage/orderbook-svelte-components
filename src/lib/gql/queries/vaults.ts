@@ -1,14 +1,15 @@
 import { subgraphClient } from "$lib/stores";
 import { derived, writable, type Readable } from "svelte/store";
 import { graphql } from "../generated";
-import type { TakeOrderEntitiesFragmentFragment, TokenVaultFragmentFragment } from "$lib/gql/generated/graphql";
 import type { CombinedError } from "@urql/svelte";
+import type { TokenVault_Filter, TokenVaultsQuery } from "$lib/gql/generated/graphql";
 
-
-const tokenVaultsFragment = graphql(`fragment TokenVaultFragment on TokenVault {
+const tokenVaults = graphql(`query tokenVaults ($filters: TokenVault_filter) {
+    tokenVaults (where: $filters) {
         vaultId
         orders {
             id
+            orderHash
             orderActive
             expression
             expressionDeployer
@@ -16,30 +17,17 @@ const tokenVaultsFragment = graphql(`fragment TokenVaultFragment on TokenVault {
         owner {
             id 
         }
-            balance
-            balanceDisplay
-            id
+        balance
+        balanceDisplay
+        id
         token {
             symbol
             name
             decimals
             id
-        }
-    }`
-)
-
-const tokenVaults = graphql(`query tokenVaults {
-    tokenVaults {
-      ...TokenVaultFragment
+        }    
     }
   }`)
-
-const tokenVaultsForOwners = graphql(`query tokenVaultsForOwners ($owners: [String!]) {
-    tokenVaults (where: {owner_in: $owners}) {
-      ...TokenVaultFragment
-    }
-  }`)
-
 
 /**
  * General query for vaults
@@ -54,26 +42,17 @@ export const queryTokenVaults = (options?: { owners?: string[], orders?: string[
     const orders = writable(options?.orders || null)
     const refreshStore = writable(1)
 
-    const result: Readable<{ data?: TokenVaultFragmentFragment[], error?: CombinedError }> = derived(
-        [subgraphClient, owners, refreshStore],
-        ([$subgraphClient, $owners, $refreshStore], set) => {
+    const result: Readable<{ data?: TokenVaultsQuery['tokenVaults'], error?: CombinedError }> = derived(
+        [subgraphClient, owners, orders, refreshStore],
+        ([$subgraphClient, $owners, $orders, $refreshStore], set) => {
             if ($subgraphClient) {
-                let queryPromise
+                let filters: TokenVault_Filter = {}
+                if ($owners?.length) filters.owner_in = $owners
+                if ($orders?.length) filters.orders_ = { orderHash_in: $orders }
 
-                if ($owners) {
-                    console.log('querying for owners', $owners)
-                    queryPromise = $subgraphClient
-                        .query(tokenVaultsForOwners, { owners: $owners })
-                        .toPromise();
-                } else {
-                    queryPromise = $subgraphClient
-                        .query(tokenVaults, {})
-                        .toPromise();
-                }
-
-                queryPromise.then((result) => {
+                $subgraphClient.query(tokenVaults, { filters }).then((result) => {
                     if (result.data?.tokenVaults) {
-                        set({ data: result.data.tokenVaults as TokenVaultFragmentFragment[] });
+                        set({ data: result.data.tokenVaults });
                     } else if (result.error) {
                         set({ error: result.error });
                     }
