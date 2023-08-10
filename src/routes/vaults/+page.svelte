@@ -1,14 +1,28 @@
 <script lang="ts">
 	import { queries, orderbook } from '$lib';
 	import { account } from 'svelte-wagmi-stores';
-	import type { TokenVaultFragmentFragment } from '$lib/gql/generated/graphql';
-	const { result, refresh, owners } = queries.queryTokenVaults();
-	import { numberToHex, getAddress } from 'viem'
+	import { numberToHex, getAddress, toHex } from 'viem';
+	import {
+		Button,
+		FloatingLabelInput,
+		Spinner,
+		Table,
+		TableBody,
+		TableBodyCell,
+		TableBodyRow,
+		TableHead,
+		TableHeadCell
+	} from 'flowbite-svelte';
+	import type { TokenVaultsQuery } from '$lib/gql/generated/graphql';
 
-	let owner: string;
+	const { result, refresh, owners, orders, tokens } = queries.queryTokenVaults();
+
+	let owner: string, order: string, token: string;
 	$: $owners = owner ? [owner] : null;
+	$: $orders = order ? [order] : null;
+	$: $tokens = token ? [token] : null;
 
-	const removeFromVault = async (vault: TokenVaultFragmentFragment) => {
+	const removeFromVault = async (vault: TokenVaultsQuery['tokenVaults'][0]) => {
 		if (!$orderbook) return;
 		await $orderbook.write.withdraw([
 			{
@@ -20,36 +34,66 @@
 	};
 </script>
 
-{#if $result?.data}
-	{#each $result.data as vault}
-		<p>
-			{numberToHex(BigInt(vault.vaultId))}
-			{vault.token.symbol}
-			{vault.token.id}
-			{vault.balanceDisplay}
-			{vault.owner.id}
-			{#if $account?.address && (getAddress($account?.address) == getAddress(vault.owner.id))}
-				<button
-					on:click={() => {
-						removeFromVault(vault);
-					}}>Withdraw all</button
-				>
-			{/if}
-		</p>
-	{/each}
-	<p>
-		<button on:click={refresh}>Refresh</button>
-		<input type="text" bind:value={owner} />
-		{#if $account?.address}
-			<button
-				on:click={() => {
-					$owners = [$account?.address?.toLowerCase() || ''];
-				}}>Only mine</button
-			>
+<div class="flex flex-col gap-y-2 items-start border border-gray-200 p-8 rounded-md mb-6">
+	<FloatingLabelInput label="Order" style="outlined" type="text" bind:value={order} />
+	<FloatingLabelInput label="Owner" style="outlined" type="text" bind:value={owner} />
+	<FloatingLabelInput label="Token" style="outlined" type="text" bind:value={token} />
+	{#if $account?.address}
+		<Button
+			class="whitespace-nowrap"
+			on:click={() => {
+				owner = $account?.address?.toLowerCase() || '';
+			}}>Show only mine</Button
+		>
+	{/if}
+</div>
+<div class="mb-6 w-full flex justify-end">
+	<Button size="xs" on:click={refresh}>Refresh</Button>
+</div>
+<Table divClass="overflow-x-scroll" shadow>
+	<TableHead>
+		<TableHeadCell>Owner</TableHeadCell>
+		<TableHeadCell>ID</TableHeadCell>
+		<TableHeadCell>Token</TableHeadCell>
+		<TableHeadCell>Balance</TableHeadCell>
+		<TableHeadCell>Linked orders</TableHeadCell>
+	</TableHead>
+	<TableBody tableBodyClass="divide-y font-regular">
+		{#if $result?.data}
+			{#each $result.data as vault}
+				<TableBodyRow>
+					<TableBodyCell>{vault.owner.id}</TableBodyCell>
+					<TableBodyCell>{toHex(BigInt(vault.vaultId))}</TableBodyCell>
+					<TableBodyCell>
+						<p>{vault.token.name}</p>
+						<p class="text-gray-400">{vault.token.id}</p>
+					</TableBodyCell>
+					<TableBodyCell>{vault.balanceDisplay}</TableBodyCell>
+					<TableBodyCell>
+						{#if vault.orders}
+							{#each vault.orders as order}
+								<p>
+									{order.orderHash}
+								</p>
+							{/each}
+						{/if}
+					</TableBodyCell>
+				</TableBodyRow>
+				<!-- {#if $orderbook && $account?.address?.toLowerCase() == order.owner.id.toLowerCase() && order.orderActive}
+						<button
+							on:click={() => {
+								const orderstruct = JSON.parse(order.orderJSONString);
+								removeOrder(orderstruct);
+							}}>Remove</button
+						>
+					{/if} -->
+			{/each}
+		{:else if $result?.error}
+			{JSON.stringify($result.error)}
+		{:else}
+			<div class="w-full flex justify-center items-center py-4">
+				<Spinner />
+			</div>
 		{/if}
-	</p>
-{:else if $result?.error}
-	{JSON.stringify($result.error)}
-{:else}
-	loading....
-{/if}
+	</TableBody>
+</Table>

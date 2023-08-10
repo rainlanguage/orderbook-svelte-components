@@ -1,39 +1,86 @@
 <script lang="ts">
 	import { queries, orderbook } from '$lib';
+	import {
+		Button,
+		FloatingLabelInput,
+		Spinner,
+		Table,
+		TableBody,
+		TableBodyCell,
+		TableBodyRow,
+		TableHead,
+		TableHeadCell
+	} from 'flowbite-svelte';
 	import { account } from 'svelte-wagmi-stores';
-	const { result, refresh, owners, orders } = queries.queryTakeOrderEntities();
+	const { result, refresh, owners, inputTokens, outputTokens, orders } =
+		queries.queryTakeOrderEntities();
 
-	let owner: string, order: string;
+	let owner: string, order: string, inputToken: string, outputToken: string;
 	$: $owners = owner ? [owner] : null;
 	$: $orders = order ? [order] : null;
+	$: $inputTokens = inputToken ? [inputToken] : null;
+	$: $outputTokens = outputToken ? [outputToken] : null;
 </script>
 
-{#if $result?.data}
-	{#each $result.data as takeOrder}
-		<p>
-			{takeOrder.order.id}
-			{takeOrder.order.owner.id}
-			{takeOrder.inputDisplay}
-			{takeOrder.outputToken.symbol}
-			{takeOrder.outputDisplay}
-			{takeOrder.inputToken.symbol}
-		</p>
-	{/each}
-{:else if $result?.error}
-	{JSON.stringify($result.error)}
-{:else}
-	loading....
-{/if}
+<div class="flex flex-col gap-y-2 items-start border border-gray-200 p-8 rounded-md mb-6">
+	<FloatingLabelInput label="Order" style="outlined" type="text" bind:value={order} />
+	<FloatingLabelInput label="Owner" style="outlined" type="text" bind:value={owner} />
+	<FloatingLabelInput label="Output token" style="outlined" type="text" bind:value={inputToken} />
+	<FloatingLabelInput label="Input token" style="outlined" type="text" bind:value={outputToken} />
 
-<button on:click={refresh}>Refresh</button>
-<label>owner</label>
-<input type="text" bind:value={owner} />
-{#if $account && $account.address}
-	<button
-		on:click={() => {
-			$account && $account.address ? (owner = $account.address.toLowerCase()) : null;
-		}}>Only mine</button
-	>
-{/if}
-<label>order</label>
-<input type="text" bind:value={order} />
+	{#if $account?.address}
+		<Button
+			class="whitespace-nowrap"
+			on:click={() => {
+				owner = $account?.address?.toLowerCase() || '';
+			}}>Show only mine</Button
+		>
+	{/if}
+</div>
+<div class="mb-6 w-full flex justify-end">
+	<Button size="xs" on:click={refresh}>Refresh</Button>
+</div>
+<Table divClass="overflow-x-scroll" shadow>
+	<TableHead>
+		<TableHeadCell>Order ID</TableHeadCell>
+		<TableHeadCell>Owner</TableHeadCell>
+		<TableHeadCell>Time</TableHeadCell>
+		<TableHeadCell>Input</TableHeadCell>
+		<TableHeadCell>Output</TableHeadCell>
+	</TableHead>
+	<TableBody tableBodyClass="divide-y font-regular">
+		{#if $result?.data}
+			{#each $result.data as takeOrder}
+				<TableBodyRow>
+					<TableBodyCell>{takeOrder.order.orderHash}</TableBodyCell>
+					<TableBodyCell>{takeOrder.order.owner.id}</TableBodyCell>
+					<TableBodyCell>{new Date(takeOrder.timestamp * 1000).toUTCString()}</TableBodyCell>
+					<TableBodyCell>
+						<p>
+							{takeOrder.inputDisplay}
+							{takeOrder.outputToken.symbol}
+						</p>
+						<p class="text-gray-400">
+							{takeOrder.outputToken.id}
+						</p>
+					</TableBodyCell>
+					<TableBodyCell>
+						<p>
+							{takeOrder.outputDisplay}
+							{takeOrder.inputToken.symbol}
+						</p>
+						<p class="text-gray-400">
+							{takeOrder.inputToken.id}
+						</p>
+					</TableBodyCell>
+				</TableBodyRow>
+			{/each}
+		{:else if $result?.error}
+			{JSON.stringify($result.error)}
+		{:else}
+			<div class="w-full flex justify-center items-center py-4">
+				<Spinner />
+			</div>
+		{/if}
+	</TableBody>
+</Table>

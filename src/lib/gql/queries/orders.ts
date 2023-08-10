@@ -5,12 +5,13 @@ import type { CombinedError } from "@urql/svelte";
 import { writable, type Readable, derived } from "svelte/store";
 
 const ordersQuery = graphql(`query ordersQuery ($filters: Order_filter) {
-    orders (where: $filters){
+    orders (where: $filters, orderBy: timestamp, orderDirection: desc){
         id
         orderHash
         owner { id }
         orderJSONString
         orderActive
+        timestamp
         validInputs {
             vaultId
             token {
@@ -63,13 +64,14 @@ export const queryOrders = (options?: { owners?: string[], orders?: string[], va
     const refreshStore = writable(1)
 
     const result: Readable<{ data?: OrdersQueryQuery['orders'], error?: CombinedError }> = derived(
-        [subgraphClient, owners, validInputs, validOutputs, refreshStore],
-        ([$subgraphClient, $owners, $validInputs, $validOutputs, $refreshStore], set) => {
+        [subgraphClient, owners, validInputs, validOutputs, orders, refreshStore],
+        ([$subgraphClient, $owners, $validInputs, $validOutputs, $orders, $refreshStore], set) => {
             if ($subgraphClient) {
                 let filters: Order_Filter = {}
                 if ($owners?.length) filters.owner_in = $owners
                 if ($validInputs?.length) filters.validInputs_ = { token_in: $validInputs }
                 if ($validInputs?.length) filters.validOutputs_ = { token_in: $validOutputs }
+                if ($orders?.length) filters.id_in = $orders
 
                 $subgraphClient.query(ordersQuery, { filters }).then((result) => {
                     if (result.data?.orders) {
@@ -89,5 +91,5 @@ export const queryOrders = (options?: { owners?: string[], orders?: string[], va
         refreshStore.update(n => n + 1);
     }
 
-    return { result, owners, orders, refresh };
+    return { result, owners, orders, validInputs, validOutputs, refresh };
 }

@@ -5,12 +5,12 @@ import type { TakeOrderEntitiesDynamicFilterQuery, TakeOrderEntity_Filter } from
 import type { CombinedError } from "@urql/svelte";
 
 const takeOrderEntitiesQuery = graphql(`query takeOrderEntitiesDynamicFilter ($filters: TakeOrderEntity_filter) {
-    takeOrderEntities (where: $filters) {
+    takeOrderEntities (where: $filters, orderBy: timestamp, orderDirection: desc) {
 		id
-	input
-	inputDisplay
-	output
-	outputDisplay
+		input
+		inputDisplay
+		output
+		outputDisplay
 		timestamp
 		order {
 			orderHash
@@ -20,11 +20,13 @@ const takeOrderEntitiesQuery = graphql(`query takeOrderEntitiesDynamicFilter ($f
 			}
 		}
 		inputToken {
+			id
 			name
 			symbol
 			decimals
 		}
 		outputToken {
+			id
 			name
 			symbol
 			decimals
@@ -47,19 +49,29 @@ const takeOrderEntitiesQuery = graphql(`query takeOrderEntitiesDynamicFilter ($f
  * Modifying the owners or orders stores, or calling the refresh function, will trigger a new query and update the result store.
  * @param options 
  */
-export const queryTakeOrderEntities = (options?: { owners?: string[], orders?: string[] }) => {
+export const queryTakeOrderEntities = (options?: { owners?: string[], orders?: string[], inputTokens?: string[], outputTokens?: string[] }) => {
 	const owners = writable(options?.owners || null)
 	const orders = writable(options?.orders || null)
+	const inputTokens = writable(options?.inputTokens || null)
+	const outputTokens = writable(options?.outputTokens || null)
+
 	const refreshStore = writable(1)
 
 	const result: Readable<{ data?: TakeOrderEntitiesDynamicFilterQuery['takeOrderEntities'], error?: CombinedError }> = derived(
-		[subgraphClient, owners, orders, refreshStore],
-		([$subgraphClient, $owners, $orders, $refreshStore], set) => {
+		[subgraphClient, owners, orders, inputTokens, outputTokens, refreshStore],
+		([$subgraphClient, $owners, $orders, $inputTokens, $outputTokens, $refreshStore], set) => {
 			if ($subgraphClient) {
 				let filters: TakeOrderEntity_Filter = {}
 				if ($owners?.length) filters.order_ = { owner_in: $owners }
 				if ($orders?.length) filters.order_ = { ...filters.order_, orderHash_in: $orders }
-
+				if ($inputTokens?.length) filters.inputToken_in = $inputTokens
+				// const orFilters = []
+				// if ($inputTokens?.length) orFilters.push({ inputToken_in: $inputTokens })
+				// if ($outputTokens?.length) orFilters.push({ outputToken_in: $outputTokens })
+				// if (orFilters.length) filters.or = orFilters
+				// if ($inputTokens?.length) filters.or = [{ inputToken_in: $inputTokens }]
+				// if ($outputTokens?.length) filters.or.push({ outputToken_in: $outputTokens })
+				if ($outputTokens?.length) filters.outputToken_in = $outputTokens
 				$subgraphClient.query(takeOrderEntitiesQuery, { filters }).toPromise().then((result) => {
 					if (result.data?.takeOrderEntities) {
 						set({ data: result.data.takeOrderEntities });
@@ -78,5 +90,5 @@ export const queryTakeOrderEntities = (options?: { owners?: string[], orders?: s
 		refreshStore.update(n => n + 1);
 	}
 
-	return { result, owners, orders, refresh };
+	return { result, owners, orders, inputTokens, outputTokens, refresh };
 }

@@ -24,16 +24,26 @@
 		SidebarItem,
 		SidebarWrapper
 	} from 'flowbite-svelte';
-	import { Icon } from 'flowbite-svelte-icons';
+	import { onMount } from 'svelte';
 
 	let address: string = '0x34200e026fbac0c902a0ff18e77a49265ca6ac99',
-		subgraphEndpoint: string = 'https://nhs-sg-router.hello-8ae.workers.dev/';
+		subgraphEndpoint: string =
+			'https://api.thegraph.com/subgraphs/name/hardyjosh/orderbook-0xd14c2ba8779c6c4fba';
 
 	$: if (subgraphEndpoint) {
 		getOrderbookAddress(subgraphEndpoint).then(({ orderbookAddress }) => {
 			if (orderbookAddress) address = orderbookAddress;
 		});
 	}
+
+	onMount(() => {
+		if (subgraphEndpoint) {
+			getOrderbookAddress(subgraphEndpoint).then(({ orderbookAddress }) => {
+				if (orderbookAddress) address = orderbookAddress;
+				initOrderbook({ address, subgraphEndpoint });
+			});
+		}
+	});
 
 	// all this boilerplate is from the web3modal docs
 	const chains = [mainnet, avalanche, goerli, polygonMumbai];
@@ -67,11 +77,9 @@
 		);
 		web3modal.setDefaultChain(goerli);
 	}
-
-	$: console.log($account);
 </script>
 
-<div class="flex flex-col h-screen relative">
+<div class="flex flex-col h-screen relative w-screen">
 	<Navbar
 		let:hidden
 		let:toggle
@@ -84,13 +92,6 @@
 			</span>
 		</NavBrand>
 		<NavHamburger on:click={toggle} />
-		<!-- <NavUl {hidden}>
-			<NavLi href="/" active={true}>Home</NavLi>
-			<NavLi href="/about">About</NavLi>
-			<NavLi href="/services">Services</NavLi>
-			<NavLi href="/pricing">Pricing</NavLi>
-			<NavLi href="/contact">Contact</NavLi>
-		</NavUl> -->
 		<Button
 			outline
 			on:click={() => {
@@ -98,9 +99,9 @@
 			}}>Connect wallet</Button
 		>
 	</Navbar>
-	<div class="flex overflow-scroll relative grow">
+	<div class="flex overflow-scroll relative grow overflow-x-clip">
 		<Sidebar class="sticky top-0 bottom-0 shrink-0 ">
-			<SidebarWrapper class="h-full bg-white border-r-gray-300 border-r rounded-none">
+			<SidebarWrapper class="h-full bg-white border-r-gray-200 border-r rounded-none">
 				<SidebarGroup>
 					<SidebarItem label="Home" href="/" />
 					<SidebarItem label="Orders" href="/orders" />
@@ -108,20 +109,20 @@
 					<SidebarItem label="Take orders" href="/queries/take-orders" />
 				</SidebarGroup>
 				<SidebarGroup border>
-					<Label for="subgraphEndpoint">Subgraph Endpoint</Label>
+					<Label for="subgraphEndpoint">Subgraph endpoint</Label>
 					<Input type="text" id="subgraphEndpoint" bind:value={subgraphEndpoint} />
-					<Label for="address">Address</Label>
+					<Label for="address">Orderbook address</Label>
 					<Input type="text" id="address" bind:value={address} />
 					<Button
 						on:click={() => {
 							initOrderbook({ address, subgraphEndpoint });
-						}}>Init</Button
+						}}>Save</Button
 					>
 				</SidebarGroup>
 			</SidebarWrapper>
 		</Sidebar>
 		{#if $orderbook}
-			<div class="w-full bg-gray-50">
+			<div class="grow p-4 overflow-x-hidden">
 				<slot />
 			</div>
 		{/if}
