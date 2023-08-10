@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { getOrderbookAddress, initOrderbook, orderbook } from '$lib';
+	import { getOrderbookAddress, initOrderbook, orderbook, subgraphClient } from '$lib';
 	import { browser } from '$app/environment';
 	import { configureChains } from '@wagmi/core';
 	import { avalanche, mainnet, goerli, polygonMumbai } from '@wagmi/core/chains';
@@ -121,7 +121,7 @@
 				</SidebarGroup>
 			</SidebarWrapper>
 		</Sidebar>
-		{#if $orderbook}
+		{#if $subgraphClient}
 			<div class="grow p-4 overflow-x-hidden">
 				<slot />
 			</div>
