@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { queries, orderbook } from '$lib';
 	import { account } from 'svelte-wagmi-stores';
-	import { numberToHex, getAddress, toHex } from 'viem';
+	import { toHex } from 'viem';
 	import {
 		Button,
 		FloatingLabelInput,
@@ -14,6 +14,7 @@
 		TableHeadCell
 	} from 'flowbite-svelte';
 	import type { TokenVaultsQuery } from '$lib/gql/generated/graphql';
+	import { goto } from '$app/navigation';
 
 	const { result, refresh, owners, orders, tokens } = queries.queryTokenVaults();
 
@@ -21,17 +22,6 @@
 	$: $owners = owner ? [owner] : null;
 	$: $orders = order ? [order] : null;
 	$: $tokens = token ? [token] : null;
-
-	const removeFromVault = async (vault: TokenVaultsQuery['tokenVaults'][0]) => {
-		if (!$orderbook) return;
-		await $orderbook.write.withdraw([
-			{
-				vaultId: vault.vaultId,
-				token: vault.token.id as `0x${string}`,
-				amount: vault.balance
-			}
-		]);
-	};
 </script>
 
 <div class="flex flex-col gap-y-2 items-start border border-gray-200 p-8 rounded-md mb-6">
@@ -50,7 +40,7 @@
 <div class="mb-6 w-full flex justify-end">
 	<Button size="xs" on:click={refresh}>Refresh</Button>
 </div>
-<Table divClass="overflow-x-scroll" shadow>
+<Table divClass="overflow-x-scroll" shadow hoverable>
 	<TableHead>
 		<TableHeadCell>Owner</TableHeadCell>
 		<TableHeadCell>ID</TableHeadCell>
@@ -61,7 +51,11 @@
 	<TableBody tableBodyClass="divide-y font-regular">
 		{#if $result?.data}
 			{#each $result.data as vault}
-				<TableBodyRow>
+				<TableBodyRow
+					on:click={() => {
+						goto(`/vaults/${toHex(BigInt(vault.vaultId))}/${vault.token.id}`);
+					}}
+				>
 					<TableBodyCell>{vault.owner.id}</TableBodyCell>
 					<TableBodyCell>{toHex(BigInt(vault.vaultId))}</TableBodyCell>
 					<TableBodyCell>

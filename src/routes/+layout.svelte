@@ -2,11 +2,12 @@
 	import '../app.postcss';
 	import { getOrderbookAddress, initOrderbook, orderbook, subgraphClient } from '$lib';
 	import { browser } from '$app/environment';
-	import { configureChains } from '@wagmi/core';
+	import { configureChains, getWalletClient } from '@wagmi/core';
 	import { avalanche, mainnet, goerli, polygonMumbai } from '@wagmi/core/chains';
-	import { createConfig, account } from 'svelte-wagmi-stores';
+	import { createConfig, account, walletClient, network } from 'svelte-wagmi-stores';
 	import { Web3Modal } from '@web3modal/html';
 	import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+
 	import {
 		Button,
 		Dropdown,
@@ -36,7 +37,8 @@
 		});
 	}
 
-	onMount(() => {
+	onMount(async () => {
+		subgraphEndpoint = localStorage.getItem('subgraphEndpoint') || subgraphEndpoint;
 		if (subgraphEndpoint) {
 			getOrderbookAddress(subgraphEndpoint).then(({ orderbookAddress }) => {
 				if (orderbookAddress) address = orderbookAddress;
@@ -77,6 +79,8 @@
 		);
 		web3modal.setDefaultChain(goerli);
 	}
+
+	$: console.log($walletClient, $account, $network);
 </script>
 
 <div class="flex flex-col h-screen relative w-screen">
@@ -116,6 +120,7 @@
 					<Button
 						on:click={() => {
 							initOrderbook({ address, subgraphEndpoint });
+							localStorage.setItem('subgraphEndpoint', subgraphEndpoint);
 						}}>Save</Button
 					>
 				</SidebarGroup>
