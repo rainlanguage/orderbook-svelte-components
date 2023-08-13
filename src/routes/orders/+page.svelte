@@ -1,11 +1,14 @@
 <script lang="ts">
+	import { shortenHexString } from './../../lib/utils/index.ts';
 	import { queries, orderbook } from '$lib';
 	import { account } from 'svelte-wagmi-stores';
 	import {
+		Badge,
 		Button,
 		FloatingLabelInput,
 		Indicator,
 		Input,
+		Popover,
 		Spinner,
 		Table,
 		TableBody,
@@ -15,6 +18,9 @@
 		TableHeadCell
 	} from 'flowbite-svelte';
 	import { Icon } from 'flowbite-svelte-icons';
+	import Property from '$lib/components/Property.svelte';
+	import { toHex } from 'viem';
+	import { fade } from 'svelte/transition';
 
 	const { result, refresh, owners, orders, validInputs, validOutputs } = queries.queryOrders();
 	let owner: string, order: string;
@@ -53,32 +59,70 @@
 	</TableHead>
 	<TableBody tableBodyClass="divide-y font-regular">
 		{#if $result?.data}
-			{#each $result.data as order}
+			{#each $result.data as order, i}
 				<TableBodyRow>
-					<TableBodyCell><Indicator color={order.orderActive ? 'green' : 'gray'} /></TableBodyCell>
-					<TableBodyCell>{order.orderHash}</TableBodyCell>
+					<TableBodyCell
+						><Indicator
+							class="mx-auto"
+							color={order.orderActive ? 'green' : 'gray'}
+						/></TableBodyCell
+					>
+					<TableBodyCell>{shortenHexString(order.orderHash)}</TableBodyCell>
 					<TableBodyCell>{new Date(order.timestamp * 1000).toLocaleDateString()}</TableBodyCell>
-					<TableBodyCell>{order.owner.id}</TableBodyCell>
+					<TableBodyCell>{shortenHexString(order.owner.id)}</TableBodyCell>
 					<TableBodyCell>
 						{#if order.validInputs}
-							{#each order.validInputs as input}
-								<p>
+							<div class="flex flex-row gap-2 flex-wrap max-w-md">
+								{#each order.validInputs as input, y}
+									{@const triggerId = `${input.tokenVault.token.symbol}-${i}-${y}`}
+									<Badge class="cursor-default" id={triggerId} color="dark" large>
+										${input.tokenVault.token.symbol}
+									</Badge>
+									<Popover
+										transition={fade}
+										params={{ duration: 100 }}
+										triggeredBy={`#${triggerId}`}
+									>
+										<Property label="Token address">
+											{input.tokenVault.token.symbol}
+										</Property>
+										<Property label="Vault balance">
+											{input.tokenVault.balanceDisplay}
+										</Property>
+										<Property label="Vault ID">
+											{shortenHexString(input.vaultId)}
+										</Property>
+									</Popover>
 									<!-- {input.vaultId} -->
-									{input.tokenVault.token.symbol}
-									{input.tokenVault.balanceDisplay}
-								</p>
-							{/each}
+								{/each}
+							</div>
 						{/if}
 					</TableBodyCell>
 					<TableBodyCell>
 						{#if order.validOutputs}
-							{#each order.validOutputs as output}
-								<p>
-									<!-- {output.vaultId} -->
-									{output.tokenVault.token.symbol}
-									{output.tokenVault.balanceDisplay}
-								</p>
-							{/each}
+							<div class="flex flex-row gap-2 flex-wrap max-w-md">
+								{#each order.validOutputs as output, y}
+									{@const triggerIdd = `${output.tokenVault.token.symbol}-${i}-${y}`}
+									<Badge class="cursor-default" id={triggerIdd} color="dark" large>
+										${output.tokenVault.token.symbol}
+									</Badge>
+									<Popover
+										transition={fade}
+										params={{ duration: 100 }}
+										triggeredBy={`#${triggerIdd}`}
+									>
+										<Property label="Token address">
+											{output.tokenVault.token.symbol}
+										</Property>
+										<Property label="Vault balance">
+											{output.tokenVault.balanceDisplay}
+										</Property>
+										<Property label="Vault ID">
+											{shortenHexString(toHex(BigInt(output.vaultId)))}
+										</Property>
+									</Popover>
+								{/each}
+							</div>
 						{/if}
 					</TableBodyCell>
 				</TableBodyRow>

@@ -1,31 +1,32 @@
 <script lang="ts">
 	import { account, network, makeContractStore } from 'svelte-wagmi-stores';
-	import type { TokenVaultsQuery } from '$lib/gql/generated/graphql';
 	import { orderbook, orderbookAddress } from '$lib';
 	import { Alert, Button, FloatingLabelInput, Heading, P, Spinner } from 'flowbite-svelte';
 	import { IERC20 } from '$lib/abi/IERC20';
 	import { onMount } from 'svelte';
 	import Property from '$lib/components/Property.svelte';
+	import type { Token } from '$lib';
+	import { formatUnits, parseUnits } from 'viem';
+	import { makeTokenStore } from '$lib/stores/token';
 
-	export let vault: TokenVaultsQuery['tokenVaults'][0];
+	export let token: Token;
+	export let vaultId: bigint;
 
-	$: erc20 = makeContractStore(IERC20, vault.token.id as `0x${string}`);
+	$: erc20 = makeTokenStore(token.address);
 
 	onMount(() => {
-		erc20 = makeContractStore(IERC20, vault.token.id as `0x${string}`);
+		erc20 = makeTokenStore(token.address);
 	});
 
 	let amount: number;
-	$: depositAmount = amount
-		? BigInt(amount) * BigInt(10) ** BigInt(vault.token.decimals)
-		: BigInt(0);
+	$: depositAmount = amount ? parseUnits(amount.toString(), token.decimals) : BigInt(0);
 
 	$: ({ write, error, isLoading, isSuccess, isError, data } = $orderbook.write({
 		functionName: 'deposit',
 		args: [
 			{
-				vaultId: vault.vaultId,
-				token: vault.token.id as `0x${string}`,
+				vaultId,
+				token: token.address,
 				amount: depositAmount
 			}
 		],
@@ -62,7 +63,6 @@
 				args: [$account?.address, $orderbookAddress]
 			})
 			.then((result) => {
-				console.log(result);
 				allowance = result;
 			})
 			.catch((e) => {
@@ -71,7 +71,6 @@
 		$erc20
 			.read({ functionName: 'balanceOf', args: [$account?.address] })
 			.then((result) => {
-				console.log(result);
 				balance = result;
 			})
 			.catch((e) => {
@@ -86,10 +85,8 @@
 <div class="gap-y-4 flex flex-col p-4 border border-gray-300 rounded-lg items-start">
 	<Heading tag="h6">Deposit</Heading>
 	<Property label="Your balance">
-		{balance !== undefined
-			? (balance / BigInt(10) ** BigInt(vault.token.decimals)).toString()
-			: '...'}
-		{vault.token.symbol}
+		{balance !== undefined ? formatUnits(balance, token.decimals) : '...'}
+		{token.symbol}
 	</Property>
 	<FloatingLabelInput label="Amount" style="outlined" type="number" bind:value={amount} />
 	{#if !allowanceOk}

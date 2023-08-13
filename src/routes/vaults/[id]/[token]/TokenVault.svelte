@@ -5,7 +5,7 @@
 	import Property from '$lib/components/Property.svelte';
 	import { account } from 'svelte-wagmi-stores';
 	import Withdraw from './Withdraw.svelte';
-	import Deposit from './Deposit.svelte';
+	import DepositExisting from './DepositExisting.svelte';
 
 	export let vaultId: `0x${string}`;
 	export let token: `0x${string}`;
@@ -24,7 +24,14 @@
 				<Property label="Vault id">{toHex(BigInt(vault.vaultId))}</Property>
 				<Property label="Owner">{vault.owner.id}</Property>
 				<Property label="Vault balance">{vault.balanceDisplay}</Property>
-				<Property label="Token">{vault.token.name} ({vault.token.symbol})</Property>
+				<Property label="Token"
+					><p>
+						{vault.token.name} ({vault.token.symbol})
+					</p>
+					<p class="text-gray-500">
+						{vault.token.id}
+					</p>
+				</Property>
 				<Property label="Linked orders">
 					{#if vault?.orders?.length}
 						{#each vault.orders as order}
@@ -40,7 +47,7 @@
 			<div class="flex flex-col gap-y-4">
 				<Heading tag="h4">Actions</Heading>
 				<Withdraw {vault} />
-				<Deposit {vault} />
+				<DepositExisting {vault} />
 			</div>
 		{/if}
 	</div>
