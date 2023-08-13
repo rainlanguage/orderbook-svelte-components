@@ -13,6 +13,7 @@
 		Dropdown,
 		DropdownDivider,
 		DropdownItem,
+		FloatingLabelInput,
 		Input,
 		Label,
 		NavBrand,
@@ -79,8 +80,6 @@
 		);
 		web3modal.setDefaultChain(goerli);
 	}
-
-	$: console.log($walletClient, $account, $network);
 </script>
 
 <div class="flex flex-col h-screen relative w-screen">
@@ -100,8 +99,14 @@
 			outline
 			on:click={() => {
 				web3modal.openModal();
-			}}>Connect wallet</Button
+			}}
 		>
+			{#if !$account?.isConnected}
+				Connect wallet
+			{:else}
+				Connected
+			{/if}
+		</Button>
 	</Navbar>
 	<div class="flex overflow-scroll relative grow overflow-x-clip">
 		<Sidebar class="sticky top-0 bottom-0 shrink-0 ">
@@ -113,16 +118,28 @@
 					<SidebarItem label="Take orders" href="/queries/take-orders" />
 				</SidebarGroup>
 				<SidebarGroup border>
-					<Label for="subgraphEndpoint">Subgraph endpoint</Label>
-					<Input type="text" id="subgraphEndpoint" bind:value={subgraphEndpoint} />
-					<Label for="address">Orderbook address</Label>
-					<Input type="text" id="address" bind:value={address} />
-					<Button
-						on:click={() => {
-							initOrderbook({ address, subgraphEndpoint });
-							localStorage.setItem('subgraphEndpoint', subgraphEndpoint);
-						}}>Save</Button
-					>
+					<div class="flex flex-col gap-y-4">
+						<FloatingLabelInput
+							style="outlined"
+							label="Subgraph endpoint"
+							type="text"
+							id="subgraphEndpoint"
+							bind:value={subgraphEndpoint}
+						/>
+						<FloatingLabelInput
+							style="outlined"
+							label="Orderbook address"
+							type="text"
+							id="address"
+							bind:value={address}
+						/>
+						<Button
+							on:click={() => {
+								initOrderbook({ address, subgraphEndpoint });
+								localStorage.setItem('subgraphEndpoint', subgraphEndpoint);
+							}}>Save</Button
+						>
+					</div>
 				</SidebarGroup>
 			</SidebarWrapper>
 		</Sidebar>

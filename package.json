@@ -70,6 +70,6 @@
 		"@urql/svelte": "^4.0.0",
 		"@web3modal/ethereum": "^2.7.0",
 		"@web3modal/html": "^2.7.0",
-		"svelte-wagmi-stores": "^0.0.3"
+		"svelte-wagmi-stores": "^0.0.9"
 	}
 }
