@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { shortenHexString } from './../../lib/utils/index.ts';
+	import { shortenHexString } from '$lib';
 	import { queries } from '$lib';
 	import { account } from 'svelte-wagmi-stores';
 	import { toHex } from 'viem';

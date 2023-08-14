@@ -12,6 +12,7 @@ const ordersQuery = graphql(`query ordersQuery ($filters: Order_filter) {
         orderJSONString
         orderActive
         timestamp
+        expression
         validInputs {
             vaultId
             token {

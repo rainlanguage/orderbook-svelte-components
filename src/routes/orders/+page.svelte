@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { queries, orderbook, shortenHexString } from '$lib';
+	import { queries, shortenHexString } from '$lib';
 	import { account } from 'svelte-wagmi-stores';
 	import {
 		Badge,
@@ -15,7 +15,6 @@
 		TableHead,
 		TableHeadCell
 	} from 'flowbite-svelte';
-	import { Icon } from 'flowbite-svelte-icons';
 	import Property from '$lib/components/Property.svelte';
 	import { toHex } from 'viem';
 	import { fade } from 'svelte/transition';
@@ -24,11 +23,6 @@
 	let owner: string, order: string;
 	$: $owners = owner ? [owner] : null;
 	$: $orders = order ? [order] : null;
-
-	const removeOrder = async (order: any) => {
-		if (!$orderbook) return;
-		await $orderbook.write.removeOrder(order);
-	};
 </script>
 
 <div class="flex flex-col gap-y-2 items-start border border-gray-200 p-8 rounded-md mb-6">
@@ -123,14 +117,6 @@
 						{/if}
 					</TableBodyCell>
 				</TableBodyRow>
-				<!-- {#if $orderbook && $account?.address?.toLowerCase() == order.owner.id.toLowerCase() && order.orderActive}
-						<button
-							on:click={() => {
-								const orderstruct = JSON.parse(order.orderJSONString);
-								removeOrder(orderstruct);
-							}}>Remove</button
-						>
-					{/if} -->
 			{/each}
 		{:else if $result?.error}
 			{JSON.stringify($result.error)}
