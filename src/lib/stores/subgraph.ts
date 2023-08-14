@@ -16,7 +16,8 @@ export const subgraphClient = derived(subgraphClientEndpoint, ($subgraphClientEn
     if ($subgraphClientEndpoint) {
         return new Client({
             url: $subgraphClientEndpoint,
-            exchanges: [cacheExchange, fetchExchange]
+            exchanges: [cacheExchange, fetchExchange],
+            requestPolicy: 'cache-and-network'
         });
     } else {
         return null;

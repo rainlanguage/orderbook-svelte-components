@@ -1,17 +1,22 @@
 import { graphql } from "$lib/gql/generated";
-import type { OrderFragmentFragment } from "$lib/gql/generated/graphql";
+import type { Order_Filter, OrdersQueryQuery } from "$lib/gql/generated/graphql";
 import { subgraphClient } from "$lib/stores";
 import type { CombinedError } from "@urql/svelte";
 import { writable, type Readable, derived } from "svelte/store";
 
-const orderFragment = graphql(`
-    fragment OrderFragment on Order {
+const ordersQuery = graphql(`query ordersQuery ($filters: Order_filter) {
+    orders (where: $filters, orderBy: timestamp, orderDirection: desc){
         id
+        orderHash
         owner { id }
         orderJSONString
         orderActive
+        timestamp
         validInputs {
             vaultId
+            token {
+                id
+            }
             tokenVault {
                 id
                 balance
@@ -25,6 +30,9 @@ const orderFragment = graphql(`
         }
         validOutputs {
             vaultId
+            token {
+                id
+            }
             tokenVault {
                 id
                 balance
@@ -37,18 +45,6 @@ const orderFragment = graphql(`
             }
         }
     }
-`)
-
-const orderEntities = graphql(`query orderEntities {
-    orders {
-      ...OrderFragment
-    }
-  }`)
-
-const orderEntitiesForOwners = graphql(`query orderEntitiesForOwners ($owners: [String!]) {
-    orders (where: {owner_in: $owners}){
-      ...OrderFragment
-    }
   }`)
 
 
@@ -60,31 +56,26 @@ const orderEntitiesForOwners = graphql(`query orderEntitiesForOwners ($owners: [
  * Modifying the owners or orders stores, or calling the refresh function, will trigger a new query and update the result store.
  * @param options 
  */
-export const queryOrders = (options?: { owners?: string[], orders?: string[] }) => {
+export const queryOrders = (options?: { owners?: string[], orders?: string[], validInputs?: string[], validOutputs?: string[] }) => {
     const owners = writable(options?.owners || null)
     const orders = writable(options?.orders || null)
+    const validInputs = writable(options?.validInputs || null)
+    const validOutputs = writable(options?.validOutputs || null)
     const refreshStore = writable(1)
 
-    const result: Readable<{ data?: OrderFragmentFragment[], error?: CombinedError }> = derived(
-        [subgraphClient, owners, refreshStore],
-        ([$subgraphClient, $owners, $refreshStore], set) => {
+    const result: Readable<{ data?: OrdersQueryQuery['orders'], error?: CombinedError }> = derived(
+        [subgraphClient, owners, validInputs, validOutputs, orders, refreshStore],
+        ([$subgraphClient, $owners, $validInputs, $validOutputs, $orders, $refreshStore], set) => {
             if ($subgraphClient) {
-                let queryPromise
+                let filters: Order_Filter = {}
+                if ($owners?.length) filters.owner_in = $owners
+                if ($validInputs?.length) filters.validInputs_ = { token_in: $validInputs }
+                if ($validInputs?.length) filters.validOutputs_ = { token_in: $validOutputs }
+                if ($orders?.length) filters.id_in = $orders
 
-                if ($owners) {
-                    console.log('querying for owners')
-                    queryPromise = $subgraphClient
-                        .query(orderEntitiesForOwners, { owners: $owners })
-                        .toPromise();
-                } else {
-                    queryPromise = $subgraphClient
-                        .query(orderEntities, {})
-                        .toPromise();
-                }
-
-                queryPromise.then((result) => {
+                $subgraphClient.query(ordersQuery, { filters }).then((result) => {
                     if (result.data?.orders) {
-                        set({ data: result.data.orders as OrderFragmentFragment[] });
+                        set({ data: result.data.orders });
                     } else if (result.error) {
                         set({ error: result.error });
                     }
@@ -100,5 +91,5 @@ export const queryOrders = (options?: { owners?: string[], orders?: string[] }) 
         refreshStore.update(n => n + 1);
     }
 
-    return { result, owners, orders, refresh };
+    return { result, owners, orders, validInputs, validOutputs, refresh };
 }
