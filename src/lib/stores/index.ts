@@ -5,6 +5,7 @@ import { getAddress, isAddress } from 'viem'
 
 export * from './orderbook'
 export * from './subgraph'
+export * from './token'
 
 /**
  * Initialize this package.
