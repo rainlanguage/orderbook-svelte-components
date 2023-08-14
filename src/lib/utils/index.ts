@@ -1,5 +1,6 @@
 export * from './vaults.js'
 export * from './token.js'
+export * from './expressions.js'
 
 /**
  * @description Shorten a hex string greater than 9 characters, e.g. 0x1234567890abcdef => 0x1234...cdef
