@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { shortenHexString } from './../../lib/utils/index.ts';
-	import { queries, orderbook } from '$lib';
+	import { queries, orderbook, shortenHexString } from '$lib';
 	import { account } from 'svelte-wagmi-stores';
 	import {
 		Badge,
 		Button,
 		FloatingLabelInput,
 		Indicator,
-		Input,
 		Popover,
 		Spinner,
 		Table,
@@ -93,7 +91,6 @@
 											{shortenHexString(input.vaultId)}
 										</Property>
 									</Popover>
-									<!-- {input.vaultId} -->
 								{/each}
 							</div>
 						{/if}

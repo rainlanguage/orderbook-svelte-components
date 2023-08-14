@@ -2,9 +2,17 @@
 
 A minimal library of components for building Rain Orderbook applications using Svelte.
 
-The goal of this library is to be totally headless, with no opinionated styling whatsoever.
+The goal of this library is to be totally headless, with no opinionated styling or markup whatsoever.
 
-Currently uses svelte-ethers-store, however this will likely be upgraded soon to be compatible with viem and wagmi-core.
+Currently contains:
+
+- Common subgraph queries, with filters as Svelte stores
+- Svelte stores that wrap wagmi methods for interacting with Orderbook and ERC20 tokens
+- Utilities for boilerplate associated with building Orderbook GUIs
+
+Use with [svelte-wagmi-stores](https://www.npmjs.com/package/svelte-wagmi-stores).
+
+**This library is currently under active development and is subject to frequent breaking changes. It is recommended to pin dependencies to a specific version.**
 
 ## Developing
 
