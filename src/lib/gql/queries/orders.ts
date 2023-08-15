@@ -45,6 +45,36 @@ const ordersQuery = graphql(`query ordersQuery ($filters: Order_filter) {
                 }
             }
         }
+        takeOrders {
+            outputIOIndex
+            inputIOIndex
+            input
+            output
+            inputDisplay
+            outputDisplay
+            inputToken {
+                decimals
+                id
+                name
+                symbol
+            }
+            outputToken {
+                decimals
+                id
+                name
+                symbol
+            }
+            sender {
+                id
+            }
+            timestamp
+            transaction {
+                blockNumber
+                timestamp
+                id
+            }
+            id
+        }
     }
   }`)
 
