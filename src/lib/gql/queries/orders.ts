@@ -101,7 +101,7 @@ export const queryOrders = (options?: { owners?: string[], orders?: string[], va
                 let filters: Order_Filter = {}
                 if ($owners?.length) filters.owner_in = $owners
                 if ($validInputs?.length) filters.validInputs_ = { token_in: $validInputs }
-                if ($validInputs?.length) filters.validOutputs_ = { token_in: $validOutputs }
+                if ($validOutputs?.length) filters.validOutputs_ = { token_in: $validOutputs }
                 if ($orders?.length) filters.id_in = $orders
 
                 $subgraphClient.query(ordersQuery, { filters }).then((result) => {
